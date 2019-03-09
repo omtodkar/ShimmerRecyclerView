@@ -259,60 +259,60 @@ public final class ShimmerRecyclerView extends RecyclerView {
                 R.styleable.ShimmerRecyclerView, 0, 0);
 
         try {
-            Shimmer.Builder builder = a.hasValue(R.styleable.ShimmerFrameLayout_shimmer_colored)
-                    && a.getBoolean(R.styleable.ShimmerFrameLayout_shimmer_colored, false)
+            Shimmer.Builder builder = a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_colored)
+                    && a.getBoolean(R.styleable.ShimmerRecyclerView_shimmer_recycler_colored, false)
                     ? new Shimmer.ColorHighlightBuilder()
                     : new Shimmer.AlphaHighlightBuilder();
 
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_clip_to_children)) {
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_clip_to_children)) {
                 builder.setClipToChildren(a.getBoolean(
-                        R.styleable.ShimmerRecyclerView_shimmer_clip_to_children, true));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_clip_to_children, true));
             }
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_auto_start)) {
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_auto_start)) {
                 builder.setAutoStart(a.getBoolean(
-                        R.styleable.ShimmerRecyclerView_shimmer_auto_start, true));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_auto_start, true));
             }
 
-            if (a.hasValue(R.styleable.ShimmerFrameLayout_shimmer_base_color)
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_base_color)
                     && builder instanceof Shimmer.ColorHighlightBuilder) {
                 ((Shimmer.ColorHighlightBuilder) builder).setBaseColor(a.getColor(
-                        R.styleable.ShimmerFrameLayout_shimmer_base_color, 0x4cffffff));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_base_color, 0x4cffffff));
             }
 
-            if (a.hasValue(R.styleable.ShimmerFrameLayout_shimmer_highlight_color)
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_highlight_color)
                     && builder instanceof Shimmer.ColorHighlightBuilder) {
                 ((Shimmer.ColorHighlightBuilder) builder).setHighlightColor(a.getColor(
-                        R.styleable.ShimmerFrameLayout_shimmer_highlight_color, Color.WHITE));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_highlight_color, Color.WHITE));
             }
 
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_base_alpha)) {
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_base_alpha)) {
                 builder.setBaseAlpha(a.getFloat(
-                        R.styleable.ShimmerRecyclerView_shimmer_base_alpha, 0.3f));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_base_alpha, 0.3f));
             }
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_highlight_alpha)) {
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_highlight_alpha)) {
                 builder.setHighlightAlpha(a.getFloat(
-                        R.styleable.ShimmerRecyclerView_shimmer_highlight_alpha, 1f));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_highlight_alpha, 1f));
             }
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_duration)) {
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_duration)) {
                 builder.setDuration(a.getInteger(
-                        R.styleable.ShimmerRecyclerView_shimmer_duration, 1000));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_duration, 1000));
             }
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_repeat_count)) {
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_repeat_count)) {
                 builder.setRepeatCount(a.getInt(
-                        R.styleable.ShimmerRecyclerView_shimmer_repeat_count, ValueAnimator.INFINITE));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_repeat_count, ValueAnimator.INFINITE));
             }
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_repeat_delay)) {
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_repeat_delay)) {
                 builder.setRepeatDelay(a.getInt(
-                        R.styleable.ShimmerRecyclerView_shimmer_repeat_delay, 0));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_repeat_delay, 0));
             }
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_repeat_mode)) {
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_repeat_mode)) {
                 builder.setRepeatMode(a.getInt(
-                        R.styleable.ShimmerRecyclerView_shimmer_repeat_mode, ValueAnimator.RESTART));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_repeat_mode, ValueAnimator.RESTART));
             }
 
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_direction)) {
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_direction)) {
                 int direction = a.getInt(
-                        R.styleable.ShimmerRecyclerView_shimmer_direction, Direction.LEFT_TO_RIGHT);
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_direction, Direction.LEFT_TO_RIGHT);
                 switch (direction) {
                     default:
                     case Direction.LEFT_TO_RIGHT:
@@ -330,8 +330,8 @@ public final class ShimmerRecyclerView extends RecyclerView {
                 }
             }
 
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_shape)) {
-                int shape = a.getInt(R.styleable.ShimmerRecyclerView_shimmer_shape, Shape.LINEAR);
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_shape)) {
+                int shape = a.getInt(R.styleable.ShimmerRecyclerView_shimmer_recycler_shape, Shape.LINEAR);
                 switch (shape) {
                     default:
                     case Shape.LINEAR:
@@ -343,35 +343,35 @@ public final class ShimmerRecyclerView extends RecyclerView {
                 }
             }
 
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_fixed_width)) {
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_fixed_width)) {
                 builder.setFixedWidth(a.getDimensionPixelSize(
-                        R.styleable.ShimmerRecyclerView_shimmer_fixed_width, 0));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_fixed_width, 0));
             }
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_fixed_height)) {
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_fixed_height)) {
                 builder.setFixedHeight(a.getDimensionPixelSize(
-                        R.styleable.ShimmerRecyclerView_shimmer_fixed_height, 0));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_fixed_height, 0));
             }
 
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_width_ratio)) {
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_width_ratio)) {
                 builder.setWidthRatio(a.getFloat(
-                        R.styleable.ShimmerRecyclerView_shimmer_width_ratio, 1f));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_width_ratio, 1f));
             }
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_height_ratio)) {
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_height_ratio)) {
                 builder.setHeightRatio(a.getFloat(
-                        R.styleable.ShimmerRecyclerView_shimmer_height_ratio, 1f));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_height_ratio, 1f));
             }
 
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_intensity)) {
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_intensity)) {
                 builder.setIntensity(a.getFloat(
-                        R.styleable.ShimmerRecyclerView_shimmer_intensity, 0f));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_intensity, 0f));
             }
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_dropoff)) {
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_dropoff)) {
                 builder.setDropoff(a.getFloat(
-                        R.styleable.ShimmerRecyclerView_shimmer_dropoff, 0.5f));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_dropoff, 0.5f));
             }
-            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_tilt)) {
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_tilt)) {
                 builder.setTilt(a.getFloat(
-                        R.styleable.ShimmerRecyclerView_shimmer_tilt, 20f));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_tilt, 20f));
             }
 
             return builder.build();
