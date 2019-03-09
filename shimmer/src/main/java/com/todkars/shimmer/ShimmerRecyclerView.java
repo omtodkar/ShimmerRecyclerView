@@ -1,9 +1,13 @@
 package com.todkars.shimmer;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 
 import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.Shimmer.Direction;
+import com.facebook.shimmer.Shimmer.Shape;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -96,6 +100,8 @@ public final class ShimmerRecyclerView extends RecyclerView {
     }
 
     /**
+     * Setting {@link Shimmer} programmatically will ignore all xml properties.
+     *
      * @param shimmer other required Shimmer properties.
      */
     public void setShimmer(Shimmer shimmer) {
@@ -115,7 +121,122 @@ public final class ShimmerRecyclerView extends RecyclerView {
     ///////////////////////////////////////////////////////////////////////////
 
     private void initialize(Context context, AttributeSet attrs) {
+        if (settings == null) settings = getDefaultSettings(context, attrs);
         mShimmerAdapter = new ShimmerAdapter(shimmerLayout, shimmerItemCount, settings);
-        
+    }
+
+    /**
+     * Extract xml attributes from {@link ShimmerRecyclerView}.
+     *
+     * @param context {@link android.app.Activity} context...
+     * @param attrs   view attributes
+     * @return default {@link Shimmer} built-up considering xml attributes.
+     */
+    private Shimmer getDefaultSettings(Context context, AttributeSet attrs) {
+        TypedArray a = context.obtainStyledAttributes(attrs,
+                R.styleable.ShimmerRecyclerView, 0, 0);
+        try {
+            Shimmer.Builder builder = new Shimmer.ColorHighlightBuilder();
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_clip_to_children)) {
+                builder.setClipToChildren(a.getBoolean(
+                        R.styleable.ShimmerRecyclerView_shimmer_clip_to_children, true));
+            }
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_auto_start)) {
+                builder.setAutoStart(a.getBoolean(
+                        R.styleable.ShimmerRecyclerView_shimmer_auto_start, true));
+            }
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_base_alpha)) {
+                builder.setBaseAlpha(a.getFloat(
+                        R.styleable.ShimmerRecyclerView_shimmer_base_alpha, 0.3f));
+            }
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_highlight_alpha)) {
+                builder.setHighlightAlpha(a.getFloat(
+                        R.styleable.ShimmerRecyclerView_shimmer_highlight_alpha, 1f));
+            }
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_duration)) {
+                builder.setDuration(a.getInteger(
+                        R.styleable.ShimmerRecyclerView_shimmer_duration, 1000));
+            }
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_repeat_count)) {
+                builder.setRepeatCount(a.getInt(
+                        R.styleable.ShimmerRecyclerView_shimmer_repeat_count, ValueAnimator.INFINITE));
+            }
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_repeat_delay)) {
+                builder.setRepeatDelay(a.getInt(
+                        R.styleable.ShimmerRecyclerView_shimmer_repeat_delay, 0));
+            }
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_repeat_mode)) {
+                builder.setRepeatMode(a.getInt(
+                        R.styleable.ShimmerRecyclerView_shimmer_repeat_mode, ValueAnimator.RESTART));
+            }
+
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_direction)) {
+                int direction = a.getInt(
+                        R.styleable.ShimmerRecyclerView_shimmer_direction, Direction.LEFT_TO_RIGHT);
+                switch (direction) {
+                    default:
+                    case Direction.LEFT_TO_RIGHT:
+                        builder.setDirection(Direction.LEFT_TO_RIGHT);
+                        break;
+                    case Direction.TOP_TO_BOTTOM:
+                        builder.setDirection(Direction.TOP_TO_BOTTOM);
+                        break;
+                    case Direction.RIGHT_TO_LEFT:
+                        builder.setDirection(Direction.RIGHT_TO_LEFT);
+                        break;
+                    case Direction.BOTTOM_TO_TOP:
+                        builder.setDirection(Direction.BOTTOM_TO_TOP);
+                        break;
+                }
+            }
+
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_shape)) {
+                int shape = a.getInt(R.styleable.ShimmerRecyclerView_shimmer_shape, Shape.LINEAR);
+                switch (shape) {
+                    default:
+                    case Shape.LINEAR:
+                        builder.setShape(Shape.LINEAR);
+                        break;
+                    case Shape.RADIAL:
+                        builder.setShape(Shape.RADIAL);
+                        break;
+                }
+            }
+
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_fixed_width)) {
+                builder.setFixedWidth(a.getDimensionPixelSize(
+                        R.styleable.ShimmerRecyclerView_shimmer_fixed_width, 0));
+            }
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_fixed_height)) {
+                builder.setFixedHeight(a.getDimensionPixelSize(
+                        R.styleable.ShimmerRecyclerView_shimmer_fixed_height, 0));
+            }
+
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_width_ratio)) {
+                builder.setWidthRatio(a.getFloat(
+                        R.styleable.ShimmerRecyclerView_shimmer_width_ratio, 1f));
+            }
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_height_ratio)) {
+                builder.setHeightRatio(a.getFloat(
+                        R.styleable.ShimmerRecyclerView_shimmer_height_ratio, 1f));
+            }
+
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_intensity)) {
+                builder.setIntensity(a.getFloat(
+                        R.styleable.ShimmerRecyclerView_shimmer_intensity, 0f));
+            }
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_dropoff)) {
+                builder.setDropoff(a.getFloat(
+                        R.styleable.ShimmerRecyclerView_shimmer_dropoff, 0.5f));
+            }
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_tilt)) {
+                builder.setTilt(a.getFloat(
+                        R.styleable.ShimmerRecyclerView_shimmer_tilt, 20f));
+            }
+
+            return builder.build();
+        } finally {
+            a.recycle();
+        }
     }
 }
