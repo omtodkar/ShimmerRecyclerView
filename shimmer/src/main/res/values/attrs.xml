@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="ShimmerRecyclerView">
-        <attr name="shimmer_clip_to_children" format="boolean" />
         <attr name="shimmer_colored" format="boolean" />
+        <attr name="shimmer_clip_to_children" format="boolean" />
         <attr name="shimmer_base_color" format="color" />
         <attr name="shimmer_highlight_color" format="color" />
         <attr name="shimmer_base_alpha" format="float" />

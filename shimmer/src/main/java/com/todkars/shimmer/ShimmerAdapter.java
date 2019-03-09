@@ -13,17 +13,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 final class ShimmerAdapter extends RecyclerView.Adapter<ShimmerViewHolder> {
 
-    private Shimmer settings;
+    private Shimmer shimmer;
 
     @LayoutRes
     private int layout;
 
     private int itemCount = 0;
 
-    ShimmerAdapter(@LayoutRes int layout, int itemCount, Shimmer settings) {
+    ShimmerAdapter(@LayoutRes int layout, int itemCount, Shimmer shimmer) {
         this.layout = layout;
         if (itemCount > 0) this.itemCount = itemCount;
-        this.settings = settings;
+        this.shimmer = shimmer;
     }
 
     @NonNull
@@ -37,7 +37,7 @@ final class ShimmerAdapter extends RecyclerView.Adapter<ShimmerViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ShimmerViewHolder holder, int position) {
-        holder.updateSettings(settings)
+        holder.updateShimmer(shimmer)
                 .bindView();
     }
 
@@ -50,8 +50,8 @@ final class ShimmerAdapter extends RecyclerView.Adapter<ShimmerViewHolder> {
     // Internal APIs
     ///////////////////////////////////////////////////////////////////////////
 
-    void setSettings(Shimmer settings) {
-        this.settings = settings;
+    void setShimmer(Shimmer shimmer) {
+        this.shimmer = shimmer;
     }
 
     void setLayout(@LayoutRes int layout) {

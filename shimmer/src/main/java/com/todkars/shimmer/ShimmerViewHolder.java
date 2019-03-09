@@ -10,27 +10,27 @@ final class ShimmerViewHolder extends RecyclerView.ViewHolder {
 
     private final ShimmerFrameLayout mShimmer;
 
-    private Shimmer settings;
+    private Shimmer shimmer;
 
     ShimmerViewHolder(@NonNull ShimmerFrameLayout itemView) {
         super(itemView);
         this.mShimmer = itemView;
     }
 
-    final ShimmerViewHolder updateSettings(Shimmer settings) {
-        this.settings = settings;
+    final ShimmerViewHolder updateShimmer(Shimmer settings) {
+        this.shimmer = settings;
         return this;
     }
 
     /**
-     * Updates shimmer settings and then starts shimmer,
+     * Updates shimmer properties and then starts shimmer,
      * if not shimmering already.
      */
     final void bindView() {
         if (mShimmer.isShimmerStarted())
             mShimmer.stopShimmer();
 
-        mShimmer.setShimmer(settings);
+        mShimmer.setShimmer(shimmer);
         mShimmer.startShimmer();
     }
 }
