@@ -71,9 +71,8 @@ public final class ShimmerRecyclerView extends RecyclerView {
         } else if (manager != mShimmerLayoutManager) {
             if (manager instanceof GridLayoutManager) {
                 mGridSpanCount = ((GridLayoutManager) manager).getSpanCount();
-            }
-
-            if (manager instanceof LinearLayoutManager) {
+            } else if (manager instanceof LinearLayoutManager) {
+                mGridSpanCount = -1;
                 mLayoutReverse = ((LinearLayoutManager) manager).getReverseLayout();
                 mLayoutOrientation = ((LinearLayoutManager) manager).getOrientation();
             }
@@ -204,6 +203,12 @@ public final class ShimmerRecyclerView extends RecyclerView {
     // Internal APIs
     ///////////////////////////////////////////////////////////////////////////
 
+
+    @Override
+    public boolean isInEditMode() {
+        return true;
+    }
+
     /**
      * Initialize Shimmer adapter based on provided shimmer settings.
      *
@@ -261,8 +266,7 @@ public final class ShimmerRecyclerView extends RecyclerView {
         try {
             Shimmer.Builder builder = a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_colored)
                     && a.getBoolean(R.styleable.ShimmerRecyclerView_shimmer_recycler_colored, false)
-                    ? new Shimmer.ColorHighlightBuilder()
-                    : new Shimmer.AlphaHighlightBuilder();
+                    ? new Shimmer.ColorHighlightBuilder() : new Shimmer.AlphaHighlightBuilder();
 
             if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_clip_to_children)) {
                 builder.setClipToChildren(a.getBoolean(
