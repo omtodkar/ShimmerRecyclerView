@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ShimmerRecyclerView">
+        <attr name="shimmer_recycler_colored" format="boolean" />
+        <attr name="shimmer_recycler_clip_to_children" format="boolean" />
+        <attr name="shimmer_recycler_base_color" format="color" />
+        <attr name="shimmer_recycler_highlight_color" format="color" />
+        <attr name="shimmer_recycler_base_alpha" format="float" />
+        <attr name="shimmer_recycler_highlight_alpha" format="float" />
+        <attr name="shimmer_recycler_auto_start" format="boolean" />
+        <attr name="shimmer_recycler_duration" format="integer" />
+        <attr name="shimmer_recycler_repeat_count" format="integer" />
+        <attr name="shimmer_recycler_repeat_delay" format="integer" />
+        <attr name="shimmer_recycler_repeat_mode" format="enum">
+            <enum name="restart" value="1" />
+            <enum name="reverse" value="2" />
+        </attr>
+        <attr name="shimmer_recycler_direction" format="enum">
+            <enum name="left_to_right" value="0" />
+            <enum name="top_to_bottom" value="1" />
+            <enum name="right_to_left" value="2" />
+            <enum name="bottom_to_top" value="3" />
+        </attr>
+        <attr name="shimmer_recycler_dropoff" format="float" />
+        <attr name="shimmer_recycler_fixed_width" format="dimension" />
+        <attr name="shimmer_recycler_fixed_height" format="dimension" />
+        <attr name="shimmer_recycler_intensity" format="float" />
+        <attr name="shimmer_recycler_width_ratio" format="float" />
+        <attr name="shimmer_recycler_height_ratio" format="float" />
+        <attr name="shimmer_recycler_shape" format="enum">
+            <enum name="linear" value="0" />
+            <enum name="radial" value="1" />
+        </attr>
+        <attr name="shimmer_recycler_tilt" format="float" />
+    </declare-styleable>
+</resources>
