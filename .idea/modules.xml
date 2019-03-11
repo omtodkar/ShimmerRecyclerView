@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/RecyclerView Shimmer.iml" filepath="$PROJECT_DIR$/RecyclerView Shimmer.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/shimmer/shimmer.iml" filepath="$PROJECT_DIR$/shimmer/shimmer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shimmer-recyclerview.iml" filepath="$PROJECT_DIR$/shimmer-recyclerview.iml" />
     </modules>
   </component>
 </project>
