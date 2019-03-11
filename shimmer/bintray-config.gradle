@@ -1,0 +1,85 @@
+ext {
+    developerId = 'omtodkar'
+    developerName = 'Omkar Todkar'
+    developerEmail = 'omtodkar@gmail.com'
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+group = properties.getProperty("bintray.group")
+version = properties.getProperty("bintray.version")
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            packaging 'aar'
+            groupId properties.getProperty("bintray.group")
+            artifactId properties.getProperty("bintray.artifact")
+
+            name properties.getProperty("bintray.name")
+            description properties.getProperty("bintray.library.description")
+            url properties.getProperty("bintray.library.site")
+
+            developers {
+                developer {
+                    id developerId
+                    name developerName
+                    email developerEmail
+                }
+            }
+
+            scm {
+                connection properties.getProperty("bintray.library.repo")
+                developerConnection properties.getProperty("bintray.library.repo")
+                url properties.getProperty("bintray.library.site")
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    // archives javadocJar
+    archives sourcesJar
+}
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+
+    pkg {
+        repo = properties.getProperty("bintray.repo")
+        name = properties.getProperty("bintray.name")
+        userOrg = properties.getProperty("bintray.org")
+
+        desc = properties.getProperty("bintray.library.description")
+        websiteUrl = properties.getProperty("bintray.library.site")
+        vcsUrl = properties.getProperty("bintray.library.repo")
+
+        dryRun = false
+        publish = true
+        override = false
+        publicDownloadNumbers = true
+
+        version {
+            desc = properties.getProperty("bintray.library.description")
+        }
+    }
+}
