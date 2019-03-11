@@ -1,8 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+ShimmerRecyclerView a custom RecyclerView library
+Copyright (C) 2019  Omkar Todkar
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see below link
+https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
+-->
 <resources>
     <declare-styleable name="ShimmerRecyclerView">
-        <attr name="shimmer_recycler_colored" format="boolean" />
         <attr name="shimmer_recycler_clip_to_children" format="boolean" />
+        <attr name="shimmer_recycler_colored" format="boolean" />
         <attr name="shimmer_recycler_base_color" format="color" />
         <attr name="shimmer_recycler_highlight_color" format="color" />
         <attr name="shimmer_recycler_base_alpha" format="float" />
@@ -22,15 +40,15 @@
             <enum name="bottom_to_top" value="3" />
         </attr>
         <attr name="shimmer_recycler_dropoff" format="float" />
-        <attr name="shimmer_recycler_fixed_width" format="dimension" />
-        <attr name="shimmer_recycler_fixed_height" format="dimension" />
         <attr name="shimmer_recycler_intensity" format="float" />
-        <attr name="shimmer_recycler_width_ratio" format="float" />
-        <attr name="shimmer_recycler_height_ratio" format="float" />
         <attr name="shimmer_recycler_shape" format="enum">
             <enum name="linear" value="0" />
             <enum name="radial" value="1" />
         </attr>
         <attr name="shimmer_recycler_tilt" format="float" />
+        <attr name="shimmer_recycler_fixed_width" format="dimension" />
+        <attr name="shimmer_recycler_fixed_height" format="dimension" />
+        <attr name="shimmer_recycler_width_ratio" format="float" />
+        <attr name="shimmer_recycler_height_ratio" format="float" />
     </declare-styleable>
 </resources>
