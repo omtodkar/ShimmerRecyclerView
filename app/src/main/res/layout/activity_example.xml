@@ -35,9 +35,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline"
             app:shimmer_recycler_auto_start="true"
+            app:shimmer_recycler_base_color="@color/colorPrimary"
             app:shimmer_recycler_colored="true"
-            app:shimmer_recycler_direction="left_to_right"
-            app:shimmer_recycler_highlight_color="#E6F5F4" />
+            app:shimmer_recycler_direction="left_to_right" />
 
         <Button
             android:id="@+id/toggle_loading"
@@ -48,8 +48,8 @@
             android:enabled="@{active}"
             android:onClick="onLoading"
             android:text="@string/toggle_loading"
-            app:layout_constraintBottom_toTopOf="@+id/guideline"
-            app:layout_constraintEnd_toStartOf="@+id/change_layout_orientation"
+            app:layout_constraintBottom_toTopOf="@+id/user_listing"
+            app:layout_constraintEnd_toStartOf="@+id/toggle_shimmer"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
@@ -64,8 +64,20 @@
             android:enabled="@{active}"
             android:onCheckedChanged="@{activity::onLayoutOrientationChange}"
             android:text="@string/layout_orientation_grid"
-            app:layout_constraintBottom_toTopOf="@+id/guideline"
+            app:layout_constraintBottom_toBottomOf="@+id/toggle_shimmer"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/toggle_shimmer"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/toggle_shimmer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="toggleShimmer"
+            android:text="@string/toggle_shimmer_show"
+            app:layout_constraintBottom_toTopOf="@+id/user_listing"
+            app:layout_constraintEnd_toStartOf="@+id/change_layout_orientation"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/toggle_loading"
             app:layout_constraintTop_toTopOf="parent" />

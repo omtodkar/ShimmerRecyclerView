@@ -28,7 +28,7 @@ public final class ShimmerRecyclerView extends RecyclerView {
 
     private LayoutManager mLayoutManager;
 
-    private boolean mScrollEnabled;
+    private boolean isShimmerShowing;
 
     @RecyclerView.Orientation
     private int mLayoutOrientation = RecyclerView.VERTICAL;
@@ -80,7 +80,7 @@ public final class ShimmerRecyclerView extends RecyclerView {
             mLayoutManager = manager;
         }
 
-        initializeLayoutManager();
+         initializeLayoutManager();
 
         if (mShimmerAdapter != null) {
             mShimmerAdapter.setLayout(mShimmerLayout);
@@ -110,7 +110,7 @@ public final class ShimmerRecyclerView extends RecyclerView {
     ///////////////////////////////////////////////////////////////////////////
 
     public final void showShimmer() {
-        mScrollEnabled = false;
+        isShimmerShowing = true;
 
         if (mShimmerLayoutManager == null) {
             initializeLayoutManager();
@@ -121,10 +121,14 @@ public final class ShimmerRecyclerView extends RecyclerView {
     }
 
     public final void hideShimmer() {
-        mScrollEnabled = true;
+        isShimmerShowing = false;
 
         setLayoutManager(mLayoutManager);
         setAdapter(mActualAdapter);
+    }
+
+    public final boolean isShimmerShowing() {
+        return isShimmerShowing;
     }
 
     /**
@@ -229,7 +233,7 @@ public final class ShimmerRecyclerView extends RecyclerView {
             mShimmerLayoutManager = new GridLayoutManager(getContext(), mGridSpanCount) {
                 @Override
                 public boolean canScrollVertically() {
-                    return mScrollEnabled;
+                    return !isShimmerShowing;
                 }
             };
         } else {
@@ -237,12 +241,12 @@ public final class ShimmerRecyclerView extends RecyclerView {
                     mLayoutOrientation, mLayoutReverse) {
                 @Override
                 public boolean canScrollVertically() {
-                    return mScrollEnabled;
+                    return !isShimmerShowing;
                 }
 
                 @Override
                 public boolean canScrollHorizontally() {
-                    return mScrollEnabled;
+                    return !isShimmerShowing;
                 }
             };
         }

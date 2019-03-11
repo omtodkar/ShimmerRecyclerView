@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 
 import com.google.gson.Gson;
@@ -54,7 +55,7 @@ public class ExampleActivity extends AppCompatActivity {
         mShimmerRecyclerView = binder.getRoot().findViewById(R.id.user_listing);
         mShimmerRecyclerView.setAdapter(adapter);
         mShimmerRecyclerView.setShimmerLayout(R.layout.list_item_vertical_shimmer);
-        mShimmerRecyclerView.setShimmerItemCount(10);
+        mShimmerRecyclerView.setShimmerItemCount(15);
 
         mShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -62,18 +63,17 @@ public class ExampleActivity extends AppCompatActivity {
     }
 
     public void onLayoutOrientationChange(CompoundButton button, boolean grid) {
-        Log.d("ExampleActivity", "onLayoutOrientationChange: " + grid);
-        button.setText(grid ? getString(R.string.layout_orientation_list)
-                : getString(R.string.layout_orientation_grid));
+        button.setText(grid ? getString(R.string.layout_orientation_list) : getString(R.string.layout_orientation_grid));
 
         RecyclerView.LayoutManager manager;
         if (grid) {
-            mShimmerRecyclerView.setShimmerLayout(R.layout.list_item_vertical_shimmer);
-            manager = new LinearLayoutManager(this);
-        } else {
             mShimmerRecyclerView.setShimmerLayout(R.layout.list_item_grid_shimmer);
             manager = new GridLayoutManager(this, 2);
+        } else {
+            mShimmerRecyclerView.setShimmerLayout(R.layout.list_item_vertical_shimmer);
+            manager = new LinearLayoutManager(this);
         }
+
         mShimmerRecyclerView.setLayoutManager(manager);
         mShimmerRecyclerView.setShimmerLayoutManager(manager);
         adapter.changeOrientation(grid);
@@ -92,7 +92,17 @@ public class ExampleActivity extends AppCompatActivity {
             public void run() {
                 new UserRetrievalTask(ExampleActivity.this).execute();
             }
-        }, 5000);
+        }, 3000);
+    }
+
+    public void toggleShimmer(View view) {
+        if (mShimmerRecyclerView.isShimmerShowing()) {
+            mShimmerRecyclerView.hideShimmer();
+            ((Button) view).setText(R.string.toggle_shimmer_show);
+        } else {
+            mShimmerRecyclerView.showShimmer();
+            ((Button) view).setText(R.string.toggle_shimmer_hide);
+        }
     }
 
     class UserRetrievalTask extends AsyncTask<Void, Void, List<User>> {

@@ -55,6 +55,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
      */
     public void changeOrientation(boolean grid) {
         this.grid = grid;
-        notifyDataSetChanged();
+        this.notifyDataSetChanged();
     }
 }

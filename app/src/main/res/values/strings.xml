@@ -3,5 +3,9 @@
 
     <string name="layout_orientation_list">List</string>
     <string name="layout_orientation_grid">Grid</string>
+
     <string name="toggle_loading">Load</string>
+
+    <string name="toggle_shimmer_show">Show</string>
+    <string name="toggle_shimmer_hide">Hide</string>
 </resources>
