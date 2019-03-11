@@ -64,7 +64,7 @@ dependencies {
 }
 ```
 
-## [LICENSE](../blob/master/LICENSE.md)
+## [LICENSE](../LICENSE.md)
 
     ShimmerRecyclerView a custom RecyclerView library
     Copyright (C) 2019  Omkar Todkar
