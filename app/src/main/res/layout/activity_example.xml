@@ -34,10 +34,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline"
-            app:shimmer_recycler_auto_start="true"
-            app:shimmer_recycler_base_color="@color/colorPrimary"
-            app:shimmer_recycler_colored="true"
-            app:shimmer_recycler_direction="left_to_right" />
+            app:shimmer_recycler_base_alpha="1"
+            app:shimmer_recycler_base_color="#E6F5F4"
+            app:shimmer_recycler_colored="true" />
 
         <Button
             android:id="@+id/toggle_loading"
@@ -61,9 +60,9 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
+            android:button="@drawable/view_toggle"
             android:enabled="@{active}"
             android:onCheckedChanged="@{activity::onLayoutOrientationChange}"
-            android:text="@string/layout_orientation_grid"
             app:layout_constraintBottom_toBottomOf="@+id/toggle_shimmer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

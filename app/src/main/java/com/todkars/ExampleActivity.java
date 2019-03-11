@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -55,7 +54,7 @@ public class ExampleActivity extends AppCompatActivity {
         mShimmerRecyclerView = binder.getRoot().findViewById(R.id.user_listing);
         mShimmerRecyclerView.setAdapter(adapter);
         mShimmerRecyclerView.setShimmerLayout(R.layout.list_item_vertical_shimmer);
-        mShimmerRecyclerView.setShimmerItemCount(15);
+        mShimmerRecyclerView.setShimmerItemCount(6);
 
         mShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -63,8 +62,6 @@ public class ExampleActivity extends AppCompatActivity {
     }
 
     public void onLayoutOrientationChange(CompoundButton button, boolean grid) {
-        button.setText(grid ? getString(R.string.layout_orientation_list) : getString(R.string.layout_orientation_grid));
-
         RecyclerView.LayoutManager manager;
         if (grid) {
             mShimmerRecyclerView.setShimmerLayout(R.layout.list_item_grid_shimmer);
@@ -75,8 +72,8 @@ public class ExampleActivity extends AppCompatActivity {
         }
 
         mShimmerRecyclerView.setLayoutManager(manager);
-        mShimmerRecyclerView.setShimmerLayoutManager(manager);
         adapter.changeOrientation(grid);
+        mShimmerRecyclerView.setAdapter(adapter);
     }
 
     /**
