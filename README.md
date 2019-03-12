@@ -2,7 +2,7 @@
 
 ![Bintray](https://img.shields.io/bintray/v/todkars/android/shimmer-recyclerview.svg?color=%230288D1&label=Version) ![GitHub](https://img.shields.io/github/license/omtodkar/ShimmerRecyclerView.svg?label=License) [![API](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14)
 
-Shimmer RecyclerView is an custom RecyclerView library based on Facebook's [Shimmer](https://github.com/facebook/shimmer-android) effect for Android library and inspired from [Sharish's ShimmerRecyclerView](https://github.com/sharish/ShimmerRecyclerView).
+ShimmerRecyclerView is an custom RecyclerView library based on Facebook's [Shimmer](https://github.com/facebook/shimmer-android) effect for Android library and inspired from [Sharish's ShimmerRecyclerView](https://github.com/sharish/ShimmerRecyclerView).
 
 There is reason behind creating a separate library for ShimmerRecyclerView, most of libraries doesn't not support runtime switching of `LayoutManager` or shimmer `layout` resources. Secondly the other similar library is build upon [Supercharge's ShimmerLayout](https://github.com/team-supercharge/ShimmerLayout) which is I feel very less active in terms of release. So I came up with an alternative.
 
@@ -64,7 +64,7 @@ public class MainActivity extends Activity {
 
 ## Attributes
 
-All attributes are same as Facebook's ***ShimmerFrameLayout*** as follows:
+All attributes used for **ShimmerRecyclerView** are same as Facebook's ***ShimmerFrameLayout*** below is detail table:
 
 | Name | Attribute |  Description |
 |---|---|---|
