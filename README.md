@@ -1,21 +1,66 @@
-# Shimmer RecyclerView ![GPL v3](https://www.gnu.org/graphics/gplv3-88x31.png)
+# ShimmerRecyclerView
 
-![Version](https://api.bintray.com/packages/todkars/android/shimmer-recyclerview/images/download.svg?version=0.1.0)
+![Bintray](https://img.shields.io/bintray/v/todkars/android/shimmer-recyclerview.svg?color=%230288D1&label=Version) ![GitHub](https://img.shields.io/github/license/omtodkar/ShimmerRecyclerView.svg?label=License) [![API](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14)
 
 Shimmer RecyclerView is an custom RecyclerView library based on Facebook's [Shimmer](https://github.com/facebook/shimmer-android) effect for Android library and inspired from [Sharish's ShimmerRecyclerView](https://github.com/sharish/ShimmerRecyclerView).
 
-There is reason behind creating a separate library for ShimmerRecyclerView, most of libraries doesn't not support runtime switching of `LayoutManager` or shimmer `layout` resource. Secondly [Sharish's ShimmerRecyclerView](https://github.com/sharish/ShimmerRecyclerView) is build upon [Supercharge's ShimmerLayout](https://github.com/team-supercharge/ShimmerLayout) which is I feel very less active in terms of release. So I came up with an alternative. 
+There is reason behind creating a separate library for ShimmerRecyclerView, most of libraries doesn't not support runtime switching of `LayoutManager` or shimmer `layout` resources. Secondly the other similar library is build upon [Supercharge's ShimmerLayout](https://github.com/team-supercharge/ShimmerLayout) which is I feel very less active in terms of release. So I came up with an alternative.
 
-Happy Coding!
+## Download
+
+To include `ShimmerRecyclerView` in your project, add the following to your dependencies:
+
+**app/build.gradle**
+```groovy
+dependencies {
+    implementation 'com.todkars:shimmer-recyclerview:{latest-version}'
+}
+```
 
 ## Usage
 The following snippet shows how you can use Shimmer RecyclerView in your project.
 
+**Layout** 
+
+```xml
+<com.todkars.shimmer.ShimmerRecyclerView
+    android:id="@+id/shimmer_recycler_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:shimmer_recycler_colored="true"
+    app:shimmer_recycler_duration="1000" />
 ```
-    <com.todkars.shimmer.ShimmerRecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-```
+
+**Activity**
+
+```java
+public class MainActivity extends Activity {
+    
+    private ShimmerRecyclerView mShimmerRecyclerView;
+    
+    //... other variables
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        mShimmerRecyclerView = findViewById(R.id.shimmer_recycler_view);
+        mShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mShimmerRecyclerView.setAdapter(adapter);
+        
+        // This is optional, use if no attributes are mentioned in layout xml resource.
+        // WARNING: Setting Shimmer programmatically will obsolete all xml attributes.
+        /* mShimmerRecyclerView.setShimmer(mShimmer); */
+        
+        mShimmerRecyclerView.showShimmer();     // to start showing shimmer
+        
+        // To stimulate long running work using android.os.Handler
+        mHandler.postDelayed((Runnable) () -> {
+            mShimmerRecyclerView.hideShimmer(); // to hide shimmer
+        }, 3000);
+    }
+}
+``` 
 
 ## Attributes
 
@@ -42,30 +87,9 @@ All attributes are same as Facebook's ***ShimmerFrameLayout*** as follows:
 | Fixed Width or Height | `shimmer_recycler_fixed_width` or `shimmer_recycler_fixed_height` | Fixed sized highlight mask, if set, overrides the relative size value. |
 | Width or Height Ratio | `shimmer_recycler_width_ratio` or `shimmer_recycler_height_ratio` | Size of the highlight mask, relative to the layout it is applied to. |
 
-## Download
+## [LICENSE](https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md)
 
-To include Shimmer RecyclerView in your project, add the following dependency:
-
-**{project}/build.gradle**
-```
-buildscript {
-    repositories {
-        google()
-        jcenter()
-        maven { url  "https://dl.bintray.com/todkars/android" }
-    }
-}
-```
-
-**app/build.gradle**
-```
-dependencies {
-    implementation 'com.todkars:shimmer-recyclerview:{latest-version}'
-}
-```
-
-## [LICENSE](../master/LICENSE.md)
-
+```text
     ShimmerRecyclerView a custom RecyclerView library
     Copyright (C) 2019  Omkar Todkar
 
@@ -81,3 +105,4 @@ dependencies {
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see https://www.gnu.org/licenses/gpl.txt
+```
