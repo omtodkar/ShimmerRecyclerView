@@ -1,6 +1,6 @@
 # ShimmerRecyclerView
 
-![Bintray](https://img.shields.io/bintray/v/todkars/android/shimmer-recyclerview.svg?color=%230288D1&label=Version) ![GitHub](https://img.shields.io/github/license/omtodkar/ShimmerRecyclerView.svg?label=License) [![API](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14)
+![Bintray](https://img.shields.io/bintray/v/todkars/android/shimmer-recyclerview.svg?color=%230288D1&label=Version) ![GitHub](https://img.shields.io/github/license/omtodkar/ShimmerRecyclerView.svg?label=License) [![API](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14) [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-ShimmerRecyclerView-green.svg?style=flat )]( https://android-arsenal.com/details/1/7612 )
 
 ShimmerRecyclerView is an custom RecyclerView library based on Facebook's [Shimmer](https://github.com/facebook/shimmer-android) effect for Android library and inspired from [Sharish's ShimmerRecyclerView](https://github.com/sharish/ShimmerRecyclerView).
 
