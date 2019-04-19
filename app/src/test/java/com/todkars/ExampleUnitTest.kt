@@ -16,30 +16,28 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see below link
 https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
 */
-package com.todkars;
+package com.todkars
 
-import android.content.Context;
-
-import androidx.test.InstrumentationRegistry;
-import androidx.test.runner.AndroidJUnit4;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import static org.junit.Assert.*;
+import org.junit.After
+import org.junit.Before
+import org.junit.runner.RunWith
+import org.mockito.junit.MockitoJUnitRunner
 
 /**
- * Instrumented test, which will execute on an Android device.
+ * Example local unit test, which will execute on the development machine (host).
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * @see [Testing documentation](http://d.android.com/tools/testing)
  */
-@RunWith(AndroidJUnit4.class)
-public class ExampleInstrumentedTest {
-    @Test
-    public void useAppContext() {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
+@RunWith(MockitoJUnitRunner::class)
+class ExampleUnitTest {
 
-        assertEquals("com.todkars", appContext.getPackageName());
+    @Before
+    @Throws(Exception::class)
+    fun setUp() {
+    }
+
+    @After
+    @Throws(Exception::class)
+    fun tearDown() {
     }
 }

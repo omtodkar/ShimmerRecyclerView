@@ -28,6 +28,7 @@ gradle-app.setting
 .idea/caches
 .idea/codeStyles
 .idea/assetWizardSettings.xml
+.idea/encodings.xml
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/

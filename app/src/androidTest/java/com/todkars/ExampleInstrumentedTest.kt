@@ -16,20 +16,28 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see below link
 https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
 */
-package com.todkars;
+package com.todkars
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import org.junit.Assert.assertEquals
+import org.junit.Test
+import org.junit.runner.RunWith
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Instrumented test, which will execute on an Android device.
  *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * @see [Testing documentation](http://d.android.com/tools/testing)
  */
-public class ExampleUnitTest {
+@RunWith(AndroidJUnit4::class)
+class ExampleInstrumentedTest {
+
     @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+    fun useAppContext() {
+        // Context of the app under test.
+        val appContext = InstrumentationRegistry.getInstrumentation()
+                .targetContext
+
+        assertEquals("com.todkars", appContext.packageName)
     }
 }

@@ -18,26 +18,11 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
 */
 package com.todkars;
 
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.todkars.adapters.UserAdapter;
-import com.todkars.model.User;
-import com.todkars.shimmer.ShimmerRecyclerView;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.ref.WeakReference;
-import java.util.Collections;
-import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -45,6 +30,12 @@ import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.todkars.adapters.UserAdapter;
+import com.todkars.model.User;
+import com.todkars.shimmer.ShimmerRecyclerView;
+
+import java.util.List;
 
 public class ExampleActivity extends AppCompatActivity {
 
@@ -105,7 +96,14 @@ public class ExampleActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                new UserRetrievalTask(ExampleActivity.this).execute();
+                new UserRetrievalTask(ExampleActivity.this, new UserRetrievalTask.UserRetrievalResult() {
+                    @Override
+                    public void onResult(List<User> users) {
+                        adapter.updateData(users);
+                        mShimmerRecyclerView.hideShimmer();
+                        buttonsEnabled = true;
+                    }
+                }).execute();
             }
         }, 3000);
     }
@@ -117,35 +115,6 @@ public class ExampleActivity extends AppCompatActivity {
         } else {
             mShimmerRecyclerView.showShimmer();
             ((Button) view).setText(R.string.toggle_shimmer_hide);
-        }
-    }
-
-    class UserRetrievalTask extends AsyncTask<Void, Void, List<User>> {
-
-        private WeakReference<Context> context;
-
-        UserRetrievalTask(Context context) {
-            this.context = new WeakReference<>(context.getApplicationContext());
-        }
-
-        @Override
-        protected List<User> doInBackground(Void... voids) {
-            if (context.get() != null) {
-                InputStream dataStream = context.get().getResources().openRawResource(R.raw.mock_data);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(dataStream));
-                List<User> users = new Gson().fromJson(reader, new TypeToken<List<User>>() {
-                }.getType());
-                Collections.shuffle(users);
-                return users;
-            } else return Collections.emptyList();
-        }
-
-        @Override
-        protected void onPostExecute(List<User> users) {
-            super.onPostExecute(users);
-            adapter.updateData(users);
-            mShimmerRecyclerView.hideShimmer();
-            buttonsEnabled = true;
         }
     }
 }
