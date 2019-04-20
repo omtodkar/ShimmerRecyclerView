@@ -39,7 +39,7 @@ import org.robolectric.shadows.ShadowApplication
 @RunWith(RobolectricTestRunner::class)
 class ExampleUnitTest {
 
-    private lateinit var activity: ActivityController<ExampleActivity>
+    private var activity: ActivityController<ExampleActivity>? = null
 
     @Before
     @Throws(Exception::class)
@@ -51,16 +51,20 @@ class ExampleUnitTest {
      * fast-forward activity to resumed state.
      */
     private fun fastForwardActivityLifecycle() {
-        activity.create().start().resume()
+        activity?.create()?.start()?.resume()
     }
 
+    /**
+     * Confirm {@link UserRetrievalTask} returns fix number
+     * of users every time.
+     */
     @Test
     fun test_user_retrieval_task_give_same_amount_of_users() {
         // given
         fastForwardActivityLifecycle()
 
         val users = ArrayList<User>()   // prepare async task.
-        val task = UserRetrievalTask(activity.get(), UserRetrievalTask
+        val task = UserRetrievalTask(activity?.get(), UserRetrievalTask
                 .UserRetrievalResult { users.addAll(it) })
         task.execute()
 
@@ -71,20 +75,36 @@ class ExampleUnitTest {
         Assert.assertEquals(1000, users.size)
     }
 
+    /**
+     * Confirm initial {@link LayoutManager} of {@link ShimmerRecyclerView}
+     * is always a {@link LinearLayoutManager}
+     */
     @Test
     fun test_initial_layout_manager_is_linear_layout_manager() {
         // given
         fastForwardActivityLifecycle()
 
         // when
-        val recyclerView = activity.get().user_listing
+        val recyclerView = activity?.get()?.user_listing
+        val checkbox = activity?.get()?.change_layout_orientation
 
         // then
-        Assert.assertTrue(recyclerView.layoutManager !is GridLayoutManager)
+        Assert.assertTrue(!checkbox!!.isChecked)
+        Assert.assertTrue(recyclerView?.layoutManager !is GridLayoutManager)
+    }
+    
+    @Test
+    fun test_on_click_hide_() {
+        // given
+        
+        // when
+        
+        // then
     }
 
     @After
     @Throws(Exception::class)
     fun tearDown() {
+        activity = null
     }
 }

@@ -41,6 +41,7 @@ public class ExampleActivity extends AppCompatActivity {
 
     private UserAdapter adapter = new UserAdapter();
 
+    private Button mToggleButton;
     private ShimmerRecyclerView mShimmerRecyclerView;
 
     private boolean buttonsEnabled = true;
@@ -59,6 +60,8 @@ public class ExampleActivity extends AppCompatActivity {
         ViewDataBinding binder = DataBindingUtil.setContentView(this, R.layout.activity_example);
         binder.setVariable(BR.activity, this);
         binder.setVariable(BR.active, buttonsEnabled);
+
+        mToggleButton = binder.getRoot().findViewById(R.id.toggle_shimmer);
 
         mShimmerRecyclerView = binder.getRoot().findViewById(R.id.user_listing);
         mShimmerRecyclerView.setAdapter(adapter);
@@ -93,6 +96,7 @@ public class ExampleActivity extends AppCompatActivity {
     public void onLoading(View view) {
         buttonsEnabled = false;
         mShimmerRecyclerView.showShimmer();
+        mToggleButton.setVisibility(View.INVISIBLE);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -102,6 +106,7 @@ public class ExampleActivity extends AppCompatActivity {
                         adapter.updateData(users);
                         mShimmerRecyclerView.hideShimmer();
                         buttonsEnabled = true;
+                        mToggleButton.setVisibility(View.VISIBLE);
                     }
                 }).execute();
             }
