@@ -22,14 +22,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.facebook.shimmer.Shimmer;
-import com.facebook.shimmer.ShimmerFrameLayout;
-
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-final class ShimmerAdapter extends RecyclerView.Adapter<ShimmerViewHolder> {
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerFrameLayout;
+
+public final class ShimmerAdapter extends RecyclerView.Adapter<ShimmerViewHolder> {
 
     private Shimmer shimmer;
 
