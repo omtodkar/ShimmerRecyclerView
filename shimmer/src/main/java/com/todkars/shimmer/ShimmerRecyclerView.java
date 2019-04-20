@@ -24,10 +24,6 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
 
-import com.facebook.shimmer.Shimmer;
-import com.facebook.shimmer.Shimmer.Direction;
-import com.facebook.shimmer.Shimmer.Shape;
-
 import androidx.annotation.CallSuper;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -35,6 +31,10 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.Shimmer.Direction;
+import com.facebook.shimmer.Shimmer.Shape;
 
 public final class ShimmerRecyclerView extends RecyclerView {
 

@@ -37,7 +37,7 @@ import org.robolectric.android.controller.ActivityController
 @RunWith(RobolectricTestRunner::class)
 class ExampleUnitTest {
 
-    lateinit var activity: ActivityController<ExampleActivity>
+    private lateinit var activity: ActivityController<ExampleActivity>
 
     @Before
     @Throws(Exception::class)
