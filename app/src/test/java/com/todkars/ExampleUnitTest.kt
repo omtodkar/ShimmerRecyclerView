@@ -19,6 +19,7 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
 package com.todkars
 
 import androidx.recyclerview.widget.GridLayoutManager
+import com.todkars.model.User
 import kotlinx.android.synthetic.main.activity_example.*
 import org.junit.After
 import org.junit.Assert
@@ -28,6 +29,7 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.android.controller.ActivityController
+import org.robolectric.shadows.ShadowApplication
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -45,11 +47,34 @@ class ExampleUnitTest {
         activity = Robolectric.buildActivity(ExampleActivity::class.java)
     }
 
+    /**
+     * fast-forward activity to resumed state.
+     */
+    private fun fastForwardActivityLifecycle() {
+        activity.create().start().resume()
+    }
+
+    @Test
+    fun test_user_retrieval_task_give_same_amount_of_users() {
+        // given
+        fastForwardActivityLifecycle()
+
+        val users = ArrayList<User>()   // prepare async task.
+        val task = UserRetrievalTask(activity.get(), UserRetrievalTask
+                .UserRetrievalResult { users.addAll(it) })
+        task.execute()
+
+        // when
+        ShadowApplication.runBackgroundTasks()
+
+        // then
+        Assert.assertEquals(1000, users.size)
+    }
+
     @Test
     fun test_initial_layout_manager_is_linear_layout_manager() {
         // given
-        // fast-forward activity to resumed state.
-        activity.create().start().resume()
+        fastForwardActivityLifecycle()
 
         // when
         val recyclerView = activity.get().user_listing
