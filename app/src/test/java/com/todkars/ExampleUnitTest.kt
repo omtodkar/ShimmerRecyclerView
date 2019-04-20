@@ -19,17 +19,21 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
 package com.todkars
 
 import androidx.recyclerview.widget.GridLayoutManager
+import com.todkars.ExampleTestActivity.TestCallback
 import com.todkars.model.User
+import com.todkars.shimmer.ShimmerAdapter
 import kotlinx.android.synthetic.main.activity_example.*
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.shadows.ShadowApplication
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -39,19 +43,29 @@ import org.robolectric.shadows.ShadowApplication
 @RunWith(RobolectricTestRunner::class)
 class ExampleUnitTest {
 
-    private var activity: ActivityController<ExampleActivity>? = null
+    private var activity: ActivityController<ExampleTestActivity>? = null
 
     @Before
     @Throws(Exception::class)
     fun setUp() {
-        activity = Robolectric.buildActivity(ExampleActivity::class.java)
+        activity = Robolectric.buildActivity(ExampleTestActivity::class.java)
     }
 
     /**
-     * fast-forward activity to resumed state.
+     * Check if {@link UserRetrievalTask} is
+     * called in {@link ExampleActivity}.
      */
-    private fun fastForwardActivityLifecycle() {
-        activity?.create()?.start()?.resume()
+    @Test
+    fun test_user_retrieval_task_is_called() {
+        // given
+        val task = Mockito.mock(UserRetrievalTask::class.java)
+
+        // when
+        activity?.get()?.userRetrievalTask = task
+        activity?.setup()
+
+        // then
+        Mockito.verify(task).execute()
     }
 
     /**
@@ -59,9 +73,9 @@ class ExampleUnitTest {
      * of users every time.
      */
     @Test
-    fun test_user_retrieval_task_give_same_amount_of_users() {
+    fun test_user_retrieval_task_gives_same_amount_of_users() {
         // given
-        fastForwardActivityLifecycle()
+        activity?.setup() // fast-forward activity to resumed & visible state.
 
         val users = ArrayList<User>()   // prepare async task.
         val task = UserRetrievalTask(activity?.get(), UserRetrievalTask
@@ -82,7 +96,7 @@ class ExampleUnitTest {
     @Test
     fun test_initial_layout_manager_is_linear_layout_manager() {
         // given
-        fastForwardActivityLifecycle()
+        activity?.setup() // fast-forward activity to resumed & visible state.
 
         // when
         val recyclerView = activity?.get()?.user_listing
@@ -92,14 +106,44 @@ class ExampleUnitTest {
         Assert.assertTrue(!checkbox!!.isChecked)
         Assert.assertTrue(recyclerView?.layoutManager !is GridLayoutManager)
     }
-    
+
+    /**
+     * Check on click of toggle button, shimmer is shown.
+     */
     @Test
-    fun test_on_click_hide_() {
+    fun test_toggle_shimmer_on_button_click() {
         // given
-        
-        // when
-        
-        // then
+        val isNotifiedCounter = AtomicInteger(0)
+
+        // set a callback for 'when' expressions and 'then' assertion
+        // so it is called after all concurrent work completes.
+        val obj = Object()
+        activity?.get()?.callback = object : TestCallback {
+            override fun onResultReceived(users: List<User>) {
+                val recyclerView = activity?.get()?.user_listing
+                val toggleButton = activity?.get()?.toggle_shimmer
+
+                // when
+                toggleButton?.performClick()
+
+                // then
+                Assert.assertTrue(recyclerView?.adapter is ShimmerAdapter)
+
+                synchronized(obj) {
+                    isNotifiedCounter.incrementAndGet()
+                    obj.notify()
+                }
+            }
+        }
+
+        // fast-forward activity to resumed & visible state.
+        activity?.setup()
+
+        // wait only if result callback is not called.
+        if (isNotifiedCounter.get() == 0)
+            synchronized(obj) {
+                obj.wait()
+            }
     }
 
     @After
