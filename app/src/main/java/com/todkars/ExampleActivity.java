@@ -19,11 +19,11 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
 package com.todkars;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
@@ -37,7 +37,10 @@ import com.todkars.shimmer.ShimmerRecyclerView;
 
 import java.util.List;
 
-public class ExampleActivity extends AppCompatActivity {
+public class ExampleActivity extends AppCompatActivity implements UserRetrievalTask.UserRetrievalResult {
+
+    @VisibleForTesting
+    public UserRetrievalTask userRetrievalTask;
 
     private UserAdapter adapter = new UserAdapter();
 
@@ -54,9 +57,13 @@ public class ExampleActivity extends AppCompatActivity {
     }
 
     /**
-     * Initial setup.
+     * Initial view and recycler list setup.
      */
     private void setupViews() {
+        if (userRetrievalTask == null)
+            userRetrievalTask = new UserRetrievalTask(ExampleActivity.this,
+                    ExampleActivity.this);
+
         ViewDataBinding binder = DataBindingUtil.setContentView(this, R.layout.activity_example);
         binder.setVariable(BR.activity, this);
         binder.setVariable(BR.active, buttonsEnabled);
@@ -70,9 +77,16 @@ public class ExampleActivity extends AppCompatActivity {
 
         mShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        onLoading(null);
+        onReload(null);
     }
 
+    /**
+     * When layout orientation {@link android.widget.CheckBox} is checked,
+     * set list orientation to gird else vice versa.
+     *
+     * @param button checkbox.
+     * @param grid   isChecked value.
+     */
     public void onLayoutOrientationChange(CompoundButton button, boolean grid) {
         RecyclerView.LayoutManager manager;
         if (grid) {
@@ -89,31 +103,11 @@ public class ExampleActivity extends AppCompatActivity {
     }
 
     /**
-     * Show shimmer for loading.
+     * Toggle show / hide shimmer on list.
      *
-     * @param view button view.
+     * @param view toggle button view.
      */
-    public void onLoading(View view) {
-        buttonsEnabled = false;
-        mShimmerRecyclerView.showShimmer();
-        mToggleButton.setVisibility(View.INVISIBLE);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                new UserRetrievalTask(ExampleActivity.this, new UserRetrievalTask.UserRetrievalResult() {
-                    @Override
-                    public void onResult(List<User> users) {
-                        adapter.updateData(users);
-                        mShimmerRecyclerView.hideShimmer();
-                        buttonsEnabled = true;
-                        mToggleButton.setVisibility(View.VISIBLE);
-                    }
-                }).execute();
-            }
-        }, 3000);
-    }
-
-    public void toggleShimmer(View view) {
+    public void onToggleShimmer(View view) {
         if (mShimmerRecyclerView.isShimmerShowing()) {
             mShimmerRecyclerView.hideShimmer();
             ((Button) view).setText(R.string.toggle_shimmer_show);
@@ -121,5 +115,33 @@ public class ExampleActivity extends AppCompatActivity {
             mShimmerRecyclerView.showShimmer();
             ((Button) view).setText(R.string.toggle_shimmer_hide);
         }
+    }
+
+    /**
+     * Reload and shuffle data,
+     * show shimmer while loading.
+     *
+     * @param view button view.
+     */
+    public void onReload(View view) {
+        buttonsEnabled = false;
+        mShimmerRecyclerView.showShimmer();
+        mToggleButton.setVisibility(View.INVISIBLE);
+        userRetrievalTask.execute();
+    }
+
+    /**
+     * On result of {@link UserRetrievalTask} this method is
+     * called with users data.
+     *
+     * @param users list of {@link User}s
+     */
+    @Override
+    @VisibleForTesting
+    public void onResult(List<User> users) {
+        adapter.updateData(users);
+        mShimmerRecyclerView.hideShimmer();
+        buttonsEnabled = true;
+        mToggleButton.setVisibility(View.VISIBLE);
     }
 }
