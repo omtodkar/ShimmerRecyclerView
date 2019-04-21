@@ -18,13 +18,16 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
 */
 package com.todkars
 
+import android.widget.CheckBox
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth.assertWithMessage
 import com.todkars.ExampleTestActivity.TestCallback
 import com.todkars.model.User
 import com.todkars.shimmer.ShimmerAdapter
+import com.todkars.shimmer.ShimmerRecyclerView
 import kotlinx.android.synthetic.main.activity_example.*
 import org.junit.After
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,8 +35,7 @@ import org.mockito.Mockito
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.android.controller.ActivityController
-import org.robolectric.shadows.ShadowApplication
-import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -43,12 +45,12 @@ import java.util.concurrent.atomic.AtomicInteger
 @RunWith(RobolectricTestRunner::class)
 class ExampleUnitTest {
 
-    private var activity: ActivityController<ExampleTestActivity>? = null
+    private lateinit var controller: ActivityController<ExampleTestActivity>
 
     @Before
     @Throws(Exception::class)
     fun setUp() {
-        activity = Robolectric.buildActivity(ExampleTestActivity::class.java)
+        controller = Robolectric.buildActivity(ExampleTestActivity::class.java)
     }
 
     /**
@@ -61,8 +63,10 @@ class ExampleUnitTest {
         val task = Mockito.mock(UserRetrievalTask::class.java)
 
         // when
-        activity?.get()?.userRetrievalTask = task
-        activity?.setup()
+        controller.get().userRetrievalTask = task
+
+        // fast-forward controller to resumed & visible state.
+        controller.setup()
 
         // then
         Mockito.verify(task).execute()
@@ -74,37 +78,28 @@ class ExampleUnitTest {
      */
     @Test
     fun test_user_retrieval_task_gives_same_amount_of_users() {
-        // given
-        activity?.setup() // fast-forward activity to resumed & visible state.
-
-        val users = ArrayList<User>()   // prepare async task.
-        val task = UserRetrievalTask(activity?.get(), UserRetrievalTask
-                .UserRetrievalResult { users.addAll(it) })
-        task.execute()
-
         // when
-        ShadowApplication.runBackgroundTasks()
+        val isNotNotified = AtomicBoolean(true)
+        val obj = Object()
+        controller.get().callback = object : TestCallback {
+            override fun onResultReceived(users: List<User>) {
+                // then
+                assertThat(users.size).isEqualTo(1000)
 
-        // then
-        Assert.assertEquals(1000, users.size)
-    }
+                synchronized(obj) {
+                    isNotNotified.compareAndSet(true, false)
+                    obj.notify()
+                }
+            }
+        }
 
-    /**
-     * Confirm initial {@link LayoutManager} of {@link ShimmerRecyclerView}
-     * is always a {@link LinearLayoutManager}
-     */
-    @Test
-    fun test_initial_layout_manager_is_linear_layout_manager() {
-        // given
-        activity?.setup() // fast-forward activity to resumed & visible state.
+        // given fast-forward controller to resumed & visible state.
+        controller.setup()
 
-        // when
-        val recyclerView = activity?.get()?.user_listing
-        val checkbox = activity?.get()?.change_layout_orientation
-
-        // then
-        Assert.assertTrue(!checkbox!!.isChecked)
-        Assert.assertTrue(recyclerView?.layoutManager !is GridLayoutManager)
+        if (isNotNotified.get())
+            synchronized(obj) {
+                obj.wait()
+            }
     }
 
     /**
@@ -113,34 +108,105 @@ class ExampleUnitTest {
     @Test
     fun test_toggle_shimmer_on_button_click() {
         // given
-        val isNotifiedCounter = AtomicInteger(0)
-
-        // set a callback for 'when' expressions and 'then' assertion
-        // so it is called after all concurrent work completes.
+        val isNotNotified = AtomicBoolean(true)
         val obj = Object()
-        activity?.get()?.callback = object : TestCallback {
+        controller.get().callback = object : TestCallback {
             override fun onResultReceived(users: List<User>) {
-                val recyclerView = activity?.get()?.user_listing
-                val toggleButton = activity?.get()?.toggle_shimmer
+                val recyclerView = controller.get().user_listing
+                val toggleButton = controller.get().toggle_shimmer
 
                 // when
-                toggleButton?.performClick()
+                toggleButton.performClick()
 
                 // then
-                Assert.assertTrue(recyclerView?.adapter is ShimmerAdapter)
+                assertThat(recyclerView.adapter is ShimmerAdapter).isTrue()
 
                 synchronized(obj) {
-                    isNotifiedCounter.incrementAndGet()
+                    isNotNotified.compareAndSet(true, false)
                     obj.notify()
                 }
             }
         }
 
-        // fast-forward activity to resumed & visible state.
-        activity?.setup()
+        // fast-forward controller to resumed & visible state.
+        controller.setup()
 
-        // wait only if result callback is not called.
-        if (isNotifiedCounter.get() == 0)
+        if (isNotNotified.get())
+            synchronized(obj) {
+                obj.wait()
+            }
+    }
+
+    /**
+     * Confirm initial {@link LayoutManager} of {@link ShimmerRecyclerView}
+     * is always a {@link LinearLayoutManager} and on toggle twice it changes to
+     *
+     * 1. Grid (GridLayoutManager)
+     * 2. List (LinearLayoutManager)
+     */
+    @Test
+    fun test_on_change_layout_manager_shimmer_layout_manager_changes() {
+        // given
+        val isNotNotified = AtomicBoolean(true)
+        val obj = Object()
+        controller.get().callback = object : TestCallback {
+            override fun onResultReceived(users: List<User>) {
+                val recyclerView = controller.get()
+                        .findViewById<ShimmerRecyclerView>(R.id.user_listing)
+
+                val layoutToggleButton = controller.get()
+                        .findViewById<CheckBox>(R.id.change_layout_orientation)
+
+                // default state
+                assertWithMessage("at default state: %s", recyclerView.layoutManager?.javaClass?.name)
+                        .that(layoutToggleButton.isChecked)
+                        .isFalse()
+
+                // when
+                layoutToggleButton.performClick()
+
+                // then
+                assertWithMessage("after 1st [checkbox]: %s", layoutToggleButton.isChecked)
+                        .that(layoutToggleButton.isChecked)
+                        .isTrue()
+
+                // when  workaround as data binding OnChangeListener not working as excepted.
+                controller.get()
+                        .onLayoutOrientationChange(layoutToggleButton, layoutToggleButton.isChecked)
+
+                // and then
+                assertWithMessage("after 1st click: %s", recyclerView.layoutManager?.javaClass?.name)
+                        .that(recyclerView.layoutManager)
+                        .isInstanceOf(GridLayoutManager::class.java)
+
+                // again when
+                layoutToggleButton.performClick()
+
+                // then
+                assertWithMessage("on 2nd [checkbox]: %s", layoutToggleButton.isChecked)
+                        .that(layoutToggleButton.isChecked)
+                        .isFalse()
+
+                // when  workaround as data binding OnChangeListener not working as excepted.
+                controller.get()
+                        .onLayoutOrientationChange(layoutToggleButton, layoutToggleButton.isChecked)
+
+                // and then
+                assertWithMessage("on 2nd click: %s", recyclerView.shimmerLayoutManager?.javaClass?.name)
+                        .that(recyclerView.shimmerLayoutManager)
+                        .isNotInstanceOf(GridLayoutManager::class.java)
+
+                synchronized(obj) {
+                    isNotNotified.compareAndSet(true, false)
+                    obj.notify()
+                }
+            }
+        }
+
+        // fast-forward controller to resumed & visible state.
+        controller.setup()
+
+        if (isNotNotified.get())
             synchronized(obj) {
                 obj.wait()
             }
@@ -149,6 +215,6 @@ class ExampleUnitTest {
     @After
     @Throws(Exception::class)
     fun tearDown() {
-        activity = null
+        controller.stop().destroy()
     }
 }
