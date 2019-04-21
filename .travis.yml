@@ -38,6 +38,7 @@ cache:
     - $HOME/.android/build-cache
 
 before_script:
+  - touch local.properties
   - chmod +x gradlew
 
 script:
