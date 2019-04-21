@@ -29,7 +29,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.todkars.adapters.UserAdapter;
 import com.todkars.model.User;
@@ -73,11 +72,10 @@ public class ExampleActivity extends AppCompatActivity implements UserRetrievalT
         mShimmerRecyclerView = binder.getRoot().findViewById(R.id.user_listing);
         mShimmerRecyclerView.setAdapter(adapter);
         mShimmerRecyclerView.setShimmerLayout(R.layout.list_item_vertical_shimmer);
-        mShimmerRecyclerView.setShimmerItemCount(6);
-
+        mShimmerRecyclerView.setShimmerItemCount(10);
         mShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        onReload(null);
+        onReload(null /* initial call to load data */);
     }
 
     /**
@@ -88,16 +86,13 @@ public class ExampleActivity extends AppCompatActivity implements UserRetrievalT
      * @param grid   isChecked value.
      */
     public void onLayoutOrientationChange(CompoundButton button, boolean grid) {
-        RecyclerView.LayoutManager manager;
-        if (grid) {
-            mShimmerRecyclerView.setShimmerLayout(R.layout.list_item_grid_shimmer);
-            manager = new GridLayoutManager(this, 2);
-        } else {
-            mShimmerRecyclerView.setShimmerLayout(R.layout.list_item_vertical_shimmer);
-            manager = new LinearLayoutManager(this);
-        }
-
-        mShimmerRecyclerView.setLayoutManager(manager);
+        mShimmerRecyclerView.setLayoutManager(
+                grid
+                        ? new GridLayoutManager(this, 2)
+                        : new LinearLayoutManager(this),
+                grid
+                        ? R.layout.list_item_grid_shimmer
+                        : R.layout.list_item_vertical_shimmer);
         adapter.changeOrientation(grid);
         mShimmerRecyclerView.setAdapter(adapter);
     }
