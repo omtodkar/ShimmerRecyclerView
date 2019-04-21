@@ -51,8 +51,7 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline"
-            app:shimmer_recycler_base_alpha="1"
-            app:shimmer_recycler_base_color="#E6F5F4"
+            app:shimmer_recycler_base_color="#03CCCC"
             app:shimmer_recycler_colored="true" />
 
         <Button
