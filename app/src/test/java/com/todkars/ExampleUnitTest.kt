@@ -195,7 +195,8 @@ class ExampleUnitTest {
                         .findViewById<CheckBox>(R.id.change_layout_orientation)
 
                 // default state
-                assertWithMessage("at default state: %s", recyclerView.layoutManager?.javaClass?.name)
+                assertWithMessage("at default state: %s",
+                        recyclerView.layoutManager?.javaClass?.name)
                         .that(layoutToggleButton.isChecked)
                         .isFalse()
 
@@ -212,8 +213,15 @@ class ExampleUnitTest {
                         .onLayoutOrientationChange(layoutToggleButton, layoutToggleButton.isChecked)
 
                 // and then
-                assertWithMessage("after 1st click: %s", recyclerView.layoutManager?.javaClass?.name)
+                assertWithMessage("after 1st click [layout-manager]: %s",
+                        recyclerView.layoutManager?.javaClass?.name)
                         .that(recyclerView.layoutManager)
+                        .isInstanceOf(GridLayoutManager::class.java)
+
+                // and
+                assertWithMessage("after 1st click [shimmer-layout-manager]: %s",
+                        recyclerView.shimmerLayoutManager?.javaClass?.name)
+                        .that(recyclerView.shimmerLayoutManager)
                         .isInstanceOf(GridLayoutManager::class.java)
 
                 // again when
@@ -229,7 +237,14 @@ class ExampleUnitTest {
                         .onLayoutOrientationChange(layoutToggleButton, layoutToggleButton.isChecked)
 
                 // and then
-                assertWithMessage("on 2nd click: %s", recyclerView.shimmerLayoutManager?.javaClass?.name)
+                assertWithMessage("on 2nd click [layout-manager]: %s",
+                        recyclerView.layoutManager?.javaClass?.name)
+                        .that(recyclerView.layoutManager)
+                        .isNotInstanceOf(GridLayoutManager::class.java)
+
+                // and
+                assertWithMessage("on 2nd click [shimmer-layout-manager]: %s",
+                        recyclerView.shimmerLayoutManager?.javaClass?.name)
                         .that(recyclerView.shimmerLayoutManager)
                         .isNotInstanceOf(GridLayoutManager::class.java)
 
