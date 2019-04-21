@@ -18,6 +18,7 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
 */
 package com.todkars;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -59,10 +60,6 @@ public class ExampleActivity extends AppCompatActivity implements UserRetrievalT
      * Initial view and recycler list setup.
      */
     private void setupViews() {
-        if (userRetrievalTask == null)
-            userRetrievalTask = new UserRetrievalTask(ExampleActivity.this,
-                    ExampleActivity.this);
-
         ViewDataBinding binder = DataBindingUtil.setContentView(this, R.layout.activity_example);
         binder.setVariable(BR.activity, this);
         binder.setVariable(BR.active, buttonsEnabled);
@@ -122,7 +119,7 @@ public class ExampleActivity extends AppCompatActivity implements UserRetrievalT
         buttonsEnabled = false;
         mShimmerRecyclerView.showShimmer();
         mToggleButton.setVisibility(View.INVISIBLE);
-        userRetrievalTask.execute();
+        generateUserRetrievalTask().execute();
     }
 
     /**
@@ -138,5 +135,11 @@ public class ExampleActivity extends AppCompatActivity implements UserRetrievalT
         mShimmerRecyclerView.hideShimmer();
         buttonsEnabled = true;
         mToggleButton.setVisibility(View.VISIBLE);
+    }
+
+    private UserRetrievalTask generateUserRetrievalTask() {
+        if (userRetrievalTask == null || userRetrievalTask.getStatus() == AsyncTask.Status.FINISHED)
+            userRetrievalTask = new UserRetrievalTask(this, this);
+        return userRetrievalTask;
     }
 }
