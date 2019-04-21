@@ -18,6 +18,7 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
 */
 package com.todkars
 
+import android.widget.Button
 import android.widget.CheckBox
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.common.truth.Truth.assertThat
@@ -58,7 +59,7 @@ class ExampleUnitTest {
      * called in {@link ExampleActivity}.
      */
     @Test
-    fun test_user_retrieval_task_is_called() {
+    fun test_user_retrieval_task_is_called_at_start() {
         // given
         val task = Mockito.mock(UserRetrievalTask::class.java)
 
@@ -94,6 +95,42 @@ class ExampleUnitTest {
         }
 
         // given fast-forward controller to resumed & visible state.
+        controller.setup()
+
+        if (isNotNotified.get())
+            synchronized(obj) {
+                obj.wait()
+            }
+    }
+
+    /**
+     * Confirm {@link UserRetrievalTask} is called on click of reload button.
+     */
+    @Test
+    fun test_on_reload_button_click_user_retrieval_task_is_called() {
+        // given
+        val isNotNotified = AtomicBoolean(true)
+        val obj = Object()
+        controller.get().callback = object : TestCallback {
+            override fun onResultReceived(users: List<User>) {
+                val task = Mockito.mock(UserRetrievalTask::class.java)
+
+                // when
+                controller.get().userRetrievalTask = task
+                val reload = controller.get().findViewById<Button>(R.id.toggle_loading)
+                reload.performClick()
+
+                // then
+                Mockito.verify(task).execute()
+
+                synchronized(obj) {
+                    isNotNotified.compareAndSet(true, false)
+                    obj.notify()
+                }
+            }
+        }
+
+        // fast-forward controller to resumed & visible state.
         controller.setup()
 
         if (isNotNotified.get())
