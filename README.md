@@ -1,9 +1,6 @@
 # ShimmerRecyclerView
 
-![Bintray](https://api.bintray.com/packages/todkars/android/shimmer-recyclerview/images/download.svg?version=0.1.0) 
-![GitHub](https://img.shields.io/github/license/omtodkar/ShimmerRecyclerView.svg?label=License) 
-[![API](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14) 
-[![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-ShimmerRecyclerView-green.svg?style=flat )]( https://android-arsenal.com/details/1/7612 )
+[![Build Status](https://travis-ci.com/omtodkar/ShimmerRecyclerView.svg?branch=master)](https://travis-ci.com/omtodkar/ShimmerRecyclerView) ![Bintray](https://api.bintray.com/packages/todkars/android/shimmer-recyclerview/images/download.svg?version=0.1.0) ![GitHub](https://img.shields.io/github/license/omtodkar/ShimmerRecyclerView.svg?label=License) [![API](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14) [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-ShimmerRecyclerView-green.svg?style=flat )]( https://android-arsenal.com/details/1/7612 ) 
 
 ShimmerRecyclerView is an custom RecyclerView library based on Facebook's [Shimmer](https://github.com/facebook/shimmer-android) effect for Android library and inspired from [Sharish's ShimmerRecyclerView](https://github.com/sharish/ShimmerRecyclerView).
 
@@ -15,6 +12,10 @@ To include `ShimmerRecyclerView` in your project, add the following to your depe
 
 **app/build.gradle**
 ```groovy
+repositories {
+    jcenter()
+}
+
 dependencies {
     implementation 'com.todkars:shimmer-recyclerview:{latest-version}'
 }
@@ -94,7 +95,7 @@ All attributes used for **ShimmerRecyclerView** are same as Facebook's ***Shimme
 
 ```text
     ShimmerRecyclerView a custom RecyclerView library
-    Copyright (C) 2019  Omkar Todkar
+    Copyright (C) 2019  Omkar Todkar <omtodkar@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -109,3 +110,5 @@ All attributes used for **ShimmerRecyclerView** are same as Facebook's ***Shimme
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see https://www.gnu.org/licenses/gpl.txt
 ```
+
+Facebook Shimmer is published under [BSD License](https://github.com/facebook/shimmer-android/blob/master/LICENSE)
