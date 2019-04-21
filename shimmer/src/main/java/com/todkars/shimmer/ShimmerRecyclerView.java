@@ -145,6 +145,18 @@ public final class ShimmerRecyclerView extends RecyclerView {
         setAdapter(mActualAdapter);
     }
 
+    /**
+     * Similar to setting {@link #setShimmerLayout(int)}
+     * and then {@link #setLayoutManager(LayoutManager)}.
+     *
+     * @param manager       {@link androidx.recyclerview.widget.RecyclerView.LayoutManager}
+     * @param shimmerLayout shimmer layout
+     */
+    public void setLayoutManager(@Nullable LayoutManager manager, @LayoutRes int shimmerLayout) {
+        setShimmerLayout(shimmerLayout);
+        setLayoutManager(manager);
+    }
+
     public final boolean isShimmerShowing() {
         return isShimmerShowing;
     }
