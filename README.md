@@ -12,10 +12,6 @@ To include `ShimmerRecyclerView` in your project, add the following to your depe
 
 **app/build.gradle**
 ```groovy
-repositories {
-    jcenter()
-}
-
 dependencies {
     implementation 'com.todkars:shimmer-recyclerview:{latest-version}'
 }
@@ -49,7 +45,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         
         mShimmerRecyclerView = findViewById(R.id.shimmer_recycler_view);
-        mShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(this), R.layout.list_item_shimmer_layout);
         mShimmerRecyclerView.setAdapter(adapter);
         
         // This is optional, use if no attributes are mentioned in layout xml resource.
