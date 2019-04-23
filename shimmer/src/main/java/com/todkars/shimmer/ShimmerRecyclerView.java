@@ -260,9 +260,15 @@ public final class ShimmerRecyclerView extends RecyclerView {
      */
     private void initializeLayoutManager() {
         if (mGridSpanCount >= 0) {
-            mShimmerLayoutManager = new GridLayoutManager(getContext(), mGridSpanCount) {
+            mShimmerLayoutManager = new GridLayoutManager(getContext(), mGridSpanCount,
+                    mLayoutOrientation, mLayoutReverse) {
                 @Override
                 public boolean canScrollVertically() {
+                    return !isShimmerShowing;
+                }
+
+                @Override
+                public boolean canScrollHorizontally() {
                     return !isShimmerShowing;
                 }
             };
