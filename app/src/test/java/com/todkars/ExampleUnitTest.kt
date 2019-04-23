@@ -156,7 +156,17 @@ class ExampleUnitTest {
                 toggleButton.performClick()
 
                 // then
-                assertThat(recyclerView.adapter is ShimmerAdapter).isTrue()
+                assertWithMessage("on 1st toggle: ")
+                        .that(recyclerView.adapter)
+                        .isInstanceOf(ShimmerAdapter::class.java)
+
+                // and when
+                toggleButton.performClick()
+
+                // then
+                assertWithMessage("on 2nd toggle: ")
+                        .that(recyclerView.adapter)
+                        .isNotInstanceOf(ShimmerAdapter::class.java)
 
                 synchronized(obj) {
                     isNotNotified.compareAndSet(true, false)
