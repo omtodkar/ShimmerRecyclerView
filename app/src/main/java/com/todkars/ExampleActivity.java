@@ -18,38 +18,33 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
 */
 package com.todkars;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.todkars.adapters.UserAdapter;
-import com.todkars.model.User;
-import com.todkars.shimmer.ShimmerRecyclerView;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.ref.WeakReference;
-import java.util.Collections;
-import java.util.List;
-
+import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-public class ExampleActivity extends AppCompatActivity {
+import com.todkars.adapters.UserAdapter;
+import com.todkars.model.User;
+import com.todkars.shimmer.ShimmerRecyclerView;
+
+import java.util.List;
+
+public class ExampleActivity extends AppCompatActivity implements UserRetrievalTask.UserRetrievalResult {
+
+    @VisibleForTesting
+    public UserRetrievalTask userRetrievalTask;
 
     private UserAdapter adapter = new UserAdapter();
 
+    private Button mToggleButton;
     private ShimmerRecyclerView mShimmerRecyclerView;
 
     private boolean buttonsEnabled = true;
@@ -62,55 +57,49 @@ public class ExampleActivity extends AppCompatActivity {
     }
 
     /**
-     * Initial setup.
+     * Initial view and recycler list setup.
      */
     private void setupViews() {
         ViewDataBinding binder = DataBindingUtil.setContentView(this, R.layout.activity_example);
         binder.setVariable(BR.activity, this);
         binder.setVariable(BR.active, buttonsEnabled);
 
+        mToggleButton = binder.getRoot().findViewById(R.id.toggle_shimmer);
+
         mShimmerRecyclerView = binder.getRoot().findViewById(R.id.user_listing);
         mShimmerRecyclerView.setAdapter(adapter);
         mShimmerRecyclerView.setShimmerLayout(R.layout.list_item_vertical_shimmer);
-        mShimmerRecyclerView.setShimmerItemCount(6);
-
+        mShimmerRecyclerView.setShimmerItemCount(10);
         mShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        onLoading(null);
+        onReload(null /* initial call to load data */);
     }
 
+    /**
+     * When layout orientation {@link android.widget.CheckBox} is checked,
+     * set list orientation to gird else vice versa.
+     *
+     * @param button checkbox.
+     * @param grid   isChecked value.
+     */
     public void onLayoutOrientationChange(CompoundButton button, boolean grid) {
-        RecyclerView.LayoutManager manager;
-        if (grid) {
-            mShimmerRecyclerView.setShimmerLayout(R.layout.list_item_grid_shimmer);
-            manager = new GridLayoutManager(this, 2);
-        } else {
-            mShimmerRecyclerView.setShimmerLayout(R.layout.list_item_vertical_shimmer);
-            manager = new LinearLayoutManager(this);
-        }
-
-        mShimmerRecyclerView.setLayoutManager(manager);
+        mShimmerRecyclerView.setLayoutManager(
+                grid
+                        ? new GridLayoutManager(this, 2)
+                        : new LinearLayoutManager(this),
+                grid
+                        ? R.layout.list_item_grid_shimmer
+                        : R.layout.list_item_vertical_shimmer);
         adapter.changeOrientation(grid);
         mShimmerRecyclerView.setAdapter(adapter);
     }
 
     /**
-     * Show shimmer for loading.
+     * Toggle show / hide shimmer on list.
      *
-     * @param view button view.
+     * @param view toggle button view.
      */
-    public void onLoading(View view) {
-        buttonsEnabled = false;
-        mShimmerRecyclerView.showShimmer();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                new UserRetrievalTask(ExampleActivity.this).execute();
-            }
-        }, 3000);
-    }
-
-    public void toggleShimmer(View view) {
+    public void onToggleShimmer(View view) {
         if (mShimmerRecyclerView.isShimmerShowing()) {
             mShimmerRecyclerView.hideShimmer();
             ((Button) view).setText(R.string.toggle_shimmer_show);
@@ -120,32 +109,37 @@ public class ExampleActivity extends AppCompatActivity {
         }
     }
 
-    class UserRetrievalTask extends AsyncTask<Void, Void, List<User>> {
+    /**
+     * Reload and shuffle data,
+     * show shimmer while loading.
+     *
+     * @param view button view.
+     */
+    public void onReload(View view) {
+        buttonsEnabled = false;
+        mShimmerRecyclerView.showShimmer();
+        mToggleButton.setVisibility(View.INVISIBLE);
+        generateUserRetrievalTask().execute();
+    }
 
-        private WeakReference<Context> context;
+    /**
+     * On result of {@link UserRetrievalTask} this method is
+     * called with users data.
+     *
+     * @param users list of {@link User}s
+     */
+    @Override
+    @VisibleForTesting
+    public void onResult(List<User> users) {
+        adapter.updateData(users);
+        mShimmerRecyclerView.hideShimmer();
+        buttonsEnabled = true;
+        mToggleButton.setVisibility(View.VISIBLE);
+    }
 
-        UserRetrievalTask(Context context) {
-            this.context = new WeakReference<>(context.getApplicationContext());
-        }
-
-        @Override
-        protected List<User> doInBackground(Void... voids) {
-            if (context.get() != null) {
-                InputStream dataStream = context.get().getResources().openRawResource(R.raw.mock_data);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(dataStream));
-                List<User> users = new Gson().fromJson(reader, new TypeToken<List<User>>() {
-                }.getType());
-                Collections.shuffle(users);
-                return users;
-            } else return Collections.emptyList();
-        }
-
-        @Override
-        protected void onPostExecute(List<User> users) {
-            super.onPostExecute(users);
-            adapter.updateData(users);
-            mShimmerRecyclerView.hideShimmer();
-            buttonsEnabled = true;
-        }
+    private UserRetrievalTask generateUserRetrievalTask() {
+        if (userRetrievalTask == null || userRetrievalTask.getStatus() == AsyncTask.Status.FINISHED)
+            userRetrievalTask = new UserRetrievalTask(this, this);
+        return userRetrievalTask;
     }
 }

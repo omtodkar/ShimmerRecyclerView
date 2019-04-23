@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 ShimmerRecyclerView a custom RecyclerView library
 Copyright (C) 2019  Omkar Todkar
 
@@ -52,8 +51,7 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline"
-            app:shimmer_recycler_base_alpha="1"
-            app:shimmer_recycler_base_color="#E6F5F4"
+            app:shimmer_recycler_base_color="#03CCCC"
             app:shimmer_recycler_colored="true" />
 
         <Button
@@ -63,7 +61,7 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:enabled="@{active}"
-            android:onClick="onLoading"
+            android:onClick="onReload"
             android:text="@string/toggle_loading"
             app:layout_constraintBottom_toTopOf="@+id/user_listing"
             app:layout_constraintEnd_toStartOf="@+id/toggle_shimmer"
@@ -91,7 +89,7 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
             android:id="@+id/toggle_shimmer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="toggleShimmer"
+            android:onClick="onToggleShimmer"
             android:text="@string/toggle_shimmer_show"
             app:layout_constraintBottom_toTopOf="@+id/user_listing"
             app:layout_constraintEnd_toStartOf="@+id/change_layout_orientation"

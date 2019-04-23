@@ -24,10 +24,6 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.util.AttributeSet;
 
-import com.facebook.shimmer.Shimmer;
-import com.facebook.shimmer.Shimmer.Direction;
-import com.facebook.shimmer.Shimmer.Shape;
-
 import androidx.annotation.CallSuper;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -35,6 +31,10 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.Shimmer.Direction;
+import com.facebook.shimmer.Shimmer.Shape;
 
 public final class ShimmerRecyclerView extends RecyclerView {
 
@@ -145,6 +145,18 @@ public final class ShimmerRecyclerView extends RecyclerView {
         setAdapter(mActualAdapter);
     }
 
+    /**
+     * Similar to setting {@link #setShimmerLayout(int)}
+     * and then {@link #setLayoutManager(LayoutManager)}.
+     *
+     * @param manager       {@link androidx.recyclerview.widget.RecyclerView.LayoutManager}
+     * @param shimmerLayout shimmer layout
+     */
+    public void setLayoutManager(@Nullable LayoutManager manager, @LayoutRes int shimmerLayout) {
+        setShimmerLayout(shimmerLayout);
+        setLayoutManager(manager);
+    }
+
     public final boolean isShimmerShowing() {
         return isShimmerShowing;
     }
@@ -248,9 +260,15 @@ public final class ShimmerRecyclerView extends RecyclerView {
      */
     private void initializeLayoutManager() {
         if (mGridSpanCount >= 0) {
-            mShimmerLayoutManager = new GridLayoutManager(getContext(), mGridSpanCount) {
+            mShimmerLayoutManager = new GridLayoutManager(getContext(), mGridSpanCount,
+                    mLayoutOrientation, mLayoutReverse) {
                 @Override
                 public boolean canScrollVertically() {
+                    return !isShimmerShowing;
+                }
+
+                @Override
+                public boolean canScrollHorizontally() {
                     return !isShimmerShowing;
                 }
             };
