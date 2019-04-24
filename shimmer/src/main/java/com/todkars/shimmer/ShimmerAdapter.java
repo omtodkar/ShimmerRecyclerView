@@ -36,11 +36,11 @@ public final class ShimmerAdapter extends RecyclerView.Adapter<ShimmerViewHolder
     @LayoutRes
     private int layout;
 
-    private int itemCount = 0;
+    private int itemCount;
 
     ShimmerAdapter(@LayoutRes int layout, int itemCount, Shimmer shimmer) {
         this.layout = layout;
-        if (itemCount > 0) this.itemCount = itemCount;
+        this.itemCount = validateCount(itemCount);
         this.shimmer = shimmer;
     }
 
@@ -48,15 +48,14 @@ public final class ShimmerAdapter extends RecyclerView.Adapter<ShimmerViewHolder
     @Override
     public ShimmerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.shimmer_viewholder_layout, parent, false);
+        View view = inflater.inflate(R.layout.recyclerview_shimmer_viewholder_layout, parent, false);
         return new ShimmerViewHolder((ShimmerFrameLayout) inflater
                 .inflate(layout, (ShimmerFrameLayout) view, true));
     }
 
     @Override
     public void onBindViewHolder(@NonNull ShimmerViewHolder holder, int position) {
-        holder.updateShimmer(shimmer)
-                .bindView();
+        holder.bindView(shimmer);
     }
 
     @Override
@@ -77,6 +76,19 @@ public final class ShimmerAdapter extends RecyclerView.Adapter<ShimmerViewHolder
     }
 
     void setCount(int count) {
-        this.itemCount = count;
+        this.itemCount = validateCount(count);
+    }
+
+    /**
+     * Validates if provided item count is greater than reasonable number
+     * of items and returns max number of items allowed.
+     * <p>
+     * Try to save memory produced by shimmer layouts.
+     *
+     * @param count input number.
+     * @return valid count number.
+     */
+    private int validateCount(int count) {
+        return count < 20 ? count : 20;
     }
 }

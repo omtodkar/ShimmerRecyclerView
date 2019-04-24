@@ -27,8 +27,10 @@ The following snippet shows how you can use Shimmer RecyclerView in your project
     android:id="@+id/shimmer_recycler_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:shimmer_recycler_colored="true"
-    app:shimmer_recycler_duration="1000" />
+    android:orientation="vertical"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+    app:shimmer_recycler_layout="@layout/list_item_shimmer_layout"
+    app:shimmer_recycler_item_count="10" />
 ```
 
 **Activity**
@@ -45,11 +47,14 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         
         mShimmerRecyclerView = findViewById(R.id.shimmer_recycler_view);
-        mShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(this), R.layout.list_item_shimmer_layout);
+        
+        mShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(this),
+            R.layout.list_item_shimmer_layout);
+        
         mShimmerRecyclerView.setAdapter(adapter);
         
         // This is optional, use if no attributes are mentioned in layout xml resource.
-        // WARNING: Setting Shimmer programmatically will obsolete all xml attributes.
+        // WARNING: Setting Shimmer programmatically will obsolete all shimmer attributes.
         /* mShimmerRecyclerView.setShimmer(mShimmer); */
         
         mShimmerRecyclerView.showShimmer();     // to start showing shimmer
@@ -60,14 +65,16 @@ public class MainActivity extends Activity {
         }, 3000);
     }
 }
-``` 
+```
 
 ## Attributes
 
-All attributes used for **ShimmerRecyclerView** are same as Facebook's ***ShimmerFrameLayout*** below is detail table:
+Most of the attributes used for **ShimmerRecyclerView** are same as Facebook's ***ShimmerFrameLayout*** below is detail table:
 
 | Name | Attribute |  Description |
 |---|---|---|
+| Shimmer Layout | shimmer_recycler_layout | Layout reference used for as shimmer base. |
+| Shimmer Item Count | shimmer_recycler_item_count | Number of shimmers to be shown in list, default is 9. |
 | Clip to Children | `shimmer_recycler_clip_to_children` | Whether to clip the shimmering effect to the children, or to opaquely draw the shimmer on top of the children. Use this if your overall layout contains transparency. |
 | Colored | `shimmer_recycler_colored` | Whether you want the shimmer to affect just the alpha or draw colors on-top of the children. |
 | Base Color | `shimmer_recycler_base_color` | If colored is specified, the base color of the content. |

@@ -18,37 +18,25 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
 */
 package com.todkars.shimmer;
 
-import com.facebook.shimmer.Shimmer;
-import com.facebook.shimmer.ShimmerFrameLayout;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.facebook.shimmer.Shimmer;
+import com.facebook.shimmer.ShimmerFrameLayout;
 
 final class ShimmerViewHolder extends RecyclerView.ViewHolder {
 
     private final ShimmerFrameLayout mShimmer;
-
-    private Shimmer shimmer;
 
     ShimmerViewHolder(@NonNull ShimmerFrameLayout itemView) {
         super(itemView);
         this.mShimmer = itemView;
     }
 
-    final ShimmerViewHolder updateShimmer(Shimmer settings) {
-        this.shimmer = settings;
-        return this;
-    }
-
     /**
-     * Updates shimmer properties and then starts shimmer,
-     * if not shimmering already.
+     * Updates shimmer properties
      */
-    final void bindView() {
-        if (mShimmer.isShimmerStarted())
-            mShimmer.stopShimmer();
-
-        mShimmer.setShimmer(shimmer);
-        mShimmer.startShimmer();
+    final void bindView(Shimmer shimmer) {
+        mShimmer.setShimmer(shimmer).startShimmer();
     }
 }

@@ -48,7 +48,7 @@ public final class ShimmerRecyclerView extends RecyclerView {
 
     private boolean isShimmerShowing;
 
-    @RecyclerView.Orientation
+    @Orientation
     private int mLayoutOrientation = RecyclerView.VERTICAL;
 
     private boolean mLayoutReverse = false;
@@ -100,13 +100,7 @@ public final class ShimmerRecyclerView extends RecyclerView {
 
         initializeLayoutManager();
 
-        if (mShimmerAdapter != null) {
-            mShimmerAdapter.setLayout(mShimmerLayout);
-            mShimmerAdapter.setCount(mShimmerItemCount);
-            mShimmerAdapter.setShimmer(shimmer);
-
-            mShimmerAdapter.notifyDataSetChanged();
-        }
+        invalidateShimmerAdapter();
 
         super.setLayoutManager(manager);
     }
@@ -128,28 +122,29 @@ public final class ShimmerRecyclerView extends RecyclerView {
     ///////////////////////////////////////////////////////////////////////////
 
     public final void showShimmer() {
-        isShimmerShowing = true;
-
         if (mShimmerLayoutManager == null) {
             initializeLayoutManager();
         }
 
         setLayoutManager(mShimmerLayoutManager);
-        setAdapter(mShimmerAdapter);
+        invalidateShimmerAdapter();
+        setAdapter(getShimmerAdapter());
+
+        isShimmerShowing = true;
     }
 
     public final void hideShimmer() {
-        isShimmerShowing = false;
-
         setLayoutManager(mLayoutManager);
-        setAdapter(mActualAdapter);
+        setAdapter(getActualAdapter());
+
+        isShimmerShowing = false;
     }
 
     /**
      * Similar to setting {@link #setShimmerLayout(int)}
      * and then {@link #setLayoutManager(LayoutManager)}.
      *
-     * @param manager       {@link androidx.recyclerview.widget.RecyclerView.LayoutManager}
+     * @param manager       linear or grid layout manager.
      * @param shimmerLayout shimmer layout
      */
     public void setLayoutManager(@Nullable LayoutManager manager, @LayoutRes int shimmerLayout) {
@@ -223,6 +218,9 @@ public final class ShimmerRecyclerView extends RecyclerView {
      * @return Shimmer adapter
      */
     public final Adapter getShimmerAdapter() {
+        if (mShimmerAdapter == null) {
+            mShimmerAdapter = new ShimmerAdapter(mShimmerLayout, mShimmerItemCount, shimmer);
+        }
         return mShimmerAdapter;
     }
 
@@ -237,12 +235,6 @@ public final class ShimmerRecyclerView extends RecyclerView {
     // Internal APIs
     ///////////////////////////////////////////////////////////////////////////
 
-
-    @Override
-    public boolean isInEditMode() {
-        return true;
-    }
-
     /**
      * Initialize Shimmer adapter based on provided shimmer settings.
      *
@@ -251,7 +243,35 @@ public final class ShimmerRecyclerView extends RecyclerView {
      */
     private void initialize(Context context, AttributeSet attrs) {
         if (shimmer == null) shimmer = getDefaultSettings(context, attrs);
-        mShimmerAdapter = new ShimmerAdapter(mShimmerLayout, mShimmerItemCount, shimmer);
+    }
+
+    /**
+     * Reset layout, count and shimmer settings
+     * in adapter and invalidate data.
+     */
+    private void invalidateShimmerAdapter() {
+        getShimmerAdapter(); // just to initialize, if it is null.
+
+        mShimmerAdapter.setLayout(mShimmerLayout);
+        mShimmerAdapter.setCount(mShimmerItemCount);
+        mShimmerAdapter.setShimmer(shimmer);
+
+        mShimmerAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * If no shimmer layout is provided, use default layout
+     * depending on layout manager.
+     *
+     * @param isGrid is GridLayoutManager attached to RecyclerView.
+     */
+    private void tryAssigningDefaultLayout(boolean isGrid) {
+        if (mShimmerLayout == 0
+                || mShimmerLayout == R.layout.recyclerview_shimmer_item_grid
+                || mShimmerLayout == R.layout.recyclerview_shimmer_item_list)
+            mShimmerLayout = isGrid
+                    ? R.layout.recyclerview_shimmer_item_grid
+                    : R.layout.recyclerview_shimmer_item_list;
     }
 
     /**
@@ -286,6 +306,8 @@ public final class ShimmerRecyclerView extends RecyclerView {
                 }
             };
         }
+
+        tryAssigningDefaultLayout(mShimmerLayoutManager instanceof GridLayoutManager);
     }
 
     /**
@@ -307,6 +329,16 @@ public final class ShimmerRecyclerView extends RecyclerView {
             Shimmer.Builder builder = a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_colored)
                     && a.getBoolean(R.styleable.ShimmerRecyclerView_shimmer_recycler_colored, false)
                     ? new Shimmer.ColorHighlightBuilder() : new Shimmer.AlphaHighlightBuilder();
+
+            // layout reference
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_layout)) {
+                setShimmerLayout(a.getResourceId(
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_layout, 0));
+            }
+
+            // shimmer item count
+            setShimmerItemCount(a.getInteger(
+                    R.styleable.ShimmerRecyclerView_shimmer_recycler_item_count, 9));
 
             if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_clip_to_children)) {
                 builder.setClipToChildren(a.getBoolean(
