@@ -7,6 +7,7 @@ Now you can set xml attributes for shimmer layout reference and number of shimme
 
 - Use `shimmer_recycler_layout` xml attribute to set shimmer layout reference.
 - Use `shimmer_recycler_item_count` xml attribute to set number of shimmer items.
+- New `ItemViewType` contract to setup `ShimmerAdapter` `viewType` based on position and layoutType.
 
 ### v0.2.0
 

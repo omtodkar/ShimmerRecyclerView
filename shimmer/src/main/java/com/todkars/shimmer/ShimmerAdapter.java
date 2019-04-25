@@ -28,8 +28,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.ShimmerFrameLayout;
+import com.todkars.shimmer.ShimmerRecyclerView.LayoutType;
 
 public final class ShimmerAdapter extends RecyclerView.Adapter<ShimmerViewHolder> {
+
+    /**
+     * A contract to change shimmer view type.
+     */
+    public interface ItemViewType {
+
+        @LayoutRes
+        int getItemViewType(@LayoutType int layoutManagerType, int position);
+    }
 
     private Shimmer shimmer;
 
@@ -38,19 +48,37 @@ public final class ShimmerAdapter extends RecyclerView.Adapter<ShimmerViewHolder
 
     private int itemCount;
 
-    ShimmerAdapter(@LayoutRes int layout, int itemCount, Shimmer shimmer) {
+    private int layoutManagerType;
+
+    private ItemViewType itemViewType;
+
+    ShimmerAdapter(@LayoutRes int layout, int itemCount, int layoutManagerType,
+                   ItemViewType itemViewType, Shimmer shimmer) {
         this.layout = layout;
         this.itemCount = validateCount(itemCount);
+        this.layoutManagerType = layoutManagerType;
+        this.itemViewType = itemViewType;
         this.shimmer = shimmer;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return (itemViewType != null)
+                ? itemViewType.getItemViewType(layoutManagerType, position)
+                : layout; /* default */
     }
 
     @NonNull
     @Override
     public ShimmerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.recyclerview_shimmer_viewholder_layout, parent, false);
+        /* inflate view holder layout and then attach provided view in it. */
+        View view = inflater.inflate(R.layout.recyclerview_shimmer_viewholder_layout,
+                parent, false);
+
         return new ShimmerViewHolder((ShimmerFrameLayout) inflater
-                .inflate(layout, (ShimmerFrameLayout) view, true));
+                .inflate(viewType, (ShimmerFrameLayout) view,
+                        true /* attach to view holder layout */));
     }
 
     @Override
@@ -77,6 +105,11 @@ public final class ShimmerAdapter extends RecyclerView.Adapter<ShimmerViewHolder
 
     void setCount(int count) {
         this.itemCount = validateCount(count);
+    }
+
+    void setShimmerItemViewType(@LayoutType int layoutManagerType, ItemViewType itemViewType) {
+        this.layoutManagerType = layoutManagerType;
+        this.itemViewType = itemViewType;
     }
 
     /**

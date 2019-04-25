@@ -25,9 +25,11 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 
 import androidx.annotation.CallSuper;
+import androidx.annotation.IntDef;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,8 +37,27 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.Shimmer.Direction;
 import com.facebook.shimmer.Shimmer.Shape;
+import com.todkars.shimmer.ShimmerAdapter.ItemViewType;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 public final class ShimmerRecyclerView extends RecyclerView {
+
+    public static final int LAYOUT_GRID = 1;
+
+    public static final int LAYOUT_LIST = 0;
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @IntDef({LAYOUT_GRID, LAYOUT_LIST})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface LayoutType {
+    }
 
     private ShimmerAdapter mShimmerAdapter;
 
@@ -59,6 +80,11 @@ public final class ShimmerRecyclerView extends RecyclerView {
     private int mShimmerLayout = 0;
 
     private int mShimmerItemCount = 9;
+
+    @LayoutType
+    private int mLayoutType = LAYOUT_LIST;
+
+    private ItemViewType mItemViewType = null;
 
     private Shimmer shimmer;
 
@@ -171,6 +197,7 @@ public final class ShimmerRecyclerView extends RecyclerView {
     /**
      * @return layout reference used as shimmer layout.
      */
+    @LayoutRes
     public final int getShimmerLayout() {
         return mShimmerLayout;
     }
@@ -222,10 +249,10 @@ public final class ShimmerRecyclerView extends RecyclerView {
     /**
      * @return Shimmer adapter
      */
-    public final Adapter getShimmerAdapter() {
-        if (mShimmerAdapter == null) {
-            mShimmerAdapter = new ShimmerAdapter(mShimmerLayout, mShimmerItemCount, shimmer);
-        }
+    public final ShimmerAdapter getShimmerAdapter() {
+        if (mShimmerAdapter == null)
+            mShimmerAdapter = new ShimmerAdapter(mShimmerLayout, mShimmerItemCount, mLayoutType,
+                    mItemViewType, shimmer);
         return mShimmerAdapter;
     }
 
@@ -234,6 +261,15 @@ public final class ShimmerRecyclerView extends RecyclerView {
      */
     public final Adapter getActualAdapter() {
         return mActualAdapter;
+    }
+
+    /**
+     * Setup loading shimmer view type.
+     *
+     * @param itemViewType a contract with {@link ShimmerAdapter}.
+     */
+    public final void setItemViewType(ItemViewType itemViewType) {
+        this.mItemViewType = itemViewType;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -259,6 +295,7 @@ public final class ShimmerRecyclerView extends RecyclerView {
 
         mShimmerAdapter.setLayout(mShimmerLayout);
         mShimmerAdapter.setCount(mShimmerItemCount);
+        mShimmerAdapter.setShimmerItemViewType(mLayoutType, mItemViewType);
         mShimmerAdapter.setShimmer(shimmer);
 
         mShimmerAdapter.notifyDataSetChanged();
@@ -312,7 +349,9 @@ public final class ShimmerRecyclerView extends RecyclerView {
             };
         }
 
-        tryAssigningDefaultLayout(mShimmerLayoutManager instanceof GridLayoutManager);
+        boolean isGridLayoutManager = mShimmerLayoutManager instanceof GridLayoutManager;
+        mLayoutType = isGridLayoutManager ? LAYOUT_GRID : LAYOUT_LIST;
+        tryAssigningDefaultLayout(isGridLayoutManager);
     }
 
     /**

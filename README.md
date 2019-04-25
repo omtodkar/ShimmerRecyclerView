@@ -6,6 +6,20 @@ ShimmerRecyclerView is an custom RecyclerView library based on Facebook's [Shimm
 
 There is reason behind creating a separate library for ShimmerRecyclerView, most of libraries doesn't not support runtime switching of `LayoutManager` or shimmer `layout` resources. Secondly the other similar library is build upon [Supercharge's ShimmerLayout](https://github.com/team-supercharge/ShimmerLayout) which is I feel very less active in terms of release. So I came up with an alternative.
 
+## Switching List and Grid layout demo
+
+Change layout manager in runtime `LinearLayoutManager` to `GridLayoutManager` and Shimmer will adopt accordingly.
+
+<img src='demo/list-grid-demo.gif' height=480 width=240 />
+
+## Multiple view type demo
+
+Setup `mShimmerRecyclerView.setItemViewType(ShimmerAdapter.ItemViewType)` to change view type of Shimmer adapter.
+
+|     List Demo                |        Grid Demo              |
+| ----------------------------  | ----------------------------- |
+| <img src='demo/list-demo.gif' height=480 width=240 /> | <img src='demo/grid-demo.gif' height=480 width=240 /> |
+
 ## Download
 
 To include `ShimmerRecyclerView` in your project, add the following to your dependencies:
@@ -56,6 +70,22 @@ public class MainActivity extends Activity {
         // This is optional, use if no attributes are mentioned in layout xml resource.
         // WARNING: Setting Shimmer programmatically will obsolete all shimmer attributes.
         /* mShimmerRecyclerView.setShimmer(mShimmer); */
+        
+        /* Shimmer layout view type depending on List / Gird */
+        mShimmerRecyclerView.setItemViewType((type, position) -> {
+            switch (type) {
+                case ShimmerRecyclerView.LAYOUT_GRID:
+                    return position % 2 == 0
+                            ? R.layout.list_item_shimmer_grid
+                            : R.layout.list_item_shimmer_grid_alternate;
+
+                default:
+                case ShimmerRecyclerView.LAYOUT_LIST:
+                    return position == 0 || position % 2 == 0
+                            ? R.layout.list_item_shimmer
+                            : R.layout.list_item_shimmer_alternate;
+            }
+        });
         
         mShimmerRecyclerView.showShimmer();     // to start showing shimmer
         
