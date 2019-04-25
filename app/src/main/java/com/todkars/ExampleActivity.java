@@ -77,7 +77,22 @@ public class ExampleActivity extends AppCompatActivity
         mReloadButton = binder.getRoot().findViewById(R.id.toggle_loading);
         mToggleButton = binder.getRoot().findViewById(R.id.toggle_shimmer);
         mOrientationButton = binder.getRoot().findViewById(R.id.change_layout_orientation);
+
         mShimmerRecyclerView = binder.getRoot().findViewById(R.id.user_listing);
+        mShimmerRecyclerView.setItemViewType((type, position) -> {
+            switch (type) {
+                case ShimmerRecyclerView.LAYOUT_GRID:
+                    return position % 2 == 0
+                            ? R.layout.list_item_shimmer_grid
+                            : R.layout.list_item_shimmer_grid_alternate;
+
+                default:
+                case ShimmerRecyclerView.LAYOUT_LIST:
+                    return position == 0 || position % 2 == 0
+                            ? R.layout.list_item_shimmer
+                            : R.layout.list_item_shimmer_alternate;
+            }
+        });
         mShimmerRecyclerView.setAdapter(adapter);
 
         onReload(null /* initial call to load data */);
