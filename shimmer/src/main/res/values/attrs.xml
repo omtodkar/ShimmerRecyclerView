@@ -50,7 +50,7 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
         <attr name="shimmer_recycler_width_ratio" format="float" />
         <attr name="shimmer_recycler_height_ratio" format="float" />
 
-        <attr name="shimmer_recycler_item_count" format="integer|reference" />
+        <attr name="shimmer_recycler_item_count" format="integer" />
         <attr name="shimmer_recycler_layout" format="reference" />
     </declare-styleable>
 </resources>

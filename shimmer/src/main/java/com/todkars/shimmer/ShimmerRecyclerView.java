@@ -56,9 +56,9 @@ public final class ShimmerRecyclerView extends RecyclerView {
     private int mGridSpanCount = -1;
 
     @LayoutRes
-    private int mShimmerLayout;
+    private int mShimmerLayout = 0;
 
-    private int mShimmerItemCount;
+    private int mShimmerItemCount = 9;
 
     private Shimmer shimmer;
 
@@ -99,7 +99,6 @@ public final class ShimmerRecyclerView extends RecyclerView {
         }
 
         initializeLayoutManager();
-
         invalidateShimmerAdapter();
 
         super.setLayoutManager(manager);
@@ -121,6 +120,9 @@ public final class ShimmerRecyclerView extends RecyclerView {
     // Public APIs
     ///////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Start showing shimmer loading.
+     */
     public final void showShimmer() {
         if (mShimmerLayoutManager == null) {
             initializeLayoutManager();
@@ -133,6 +135,9 @@ public final class ShimmerRecyclerView extends RecyclerView {
         isShimmerShowing = true;
     }
 
+    /**
+     * Stop showing shimmer loading and setup
+     */
     public final void hideShimmer() {
         setLayoutManager(mLayoutManager);
         setAdapter(getActualAdapter());
@@ -318,9 +323,12 @@ public final class ShimmerRecyclerView extends RecyclerView {
      * @return default {@link Shimmer} built-up considering xml attributes.
      */
     private Shimmer getDefaultSettings(Context context, AttributeSet attrs) {
-        if (attrs == null) {
-            return new Shimmer.AlphaHighlightBuilder().build();
-        }
+        if (attrs == null) return new Shimmer.AlphaHighlightBuilder()
+                /* alter default values */
+                .setBaseAlpha(1f)
+                .setHighlightAlpha(0.3f)
+                .setTilt(25f)
+                .build();
 
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.ShimmerRecyclerView, 0, 0);
@@ -333,12 +341,12 @@ public final class ShimmerRecyclerView extends RecyclerView {
             // layout reference
             if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_layout)) {
                 setShimmerLayout(a.getResourceId(
-                        R.styleable.ShimmerRecyclerView_shimmer_recycler_layout, 0));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_layout, mShimmerLayout));
             }
 
             // shimmer item count
             setShimmerItemCount(a.getInteger(
-                    R.styleable.ShimmerRecyclerView_shimmer_recycler_item_count, 9));
+                    R.styleable.ShimmerRecyclerView_shimmer_recycler_item_count, mShimmerItemCount));
 
             if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_clip_to_children)) {
                 builder.setClipToChildren(a.getBoolean(
@@ -363,11 +371,11 @@ public final class ShimmerRecyclerView extends RecyclerView {
 
             if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_base_alpha)) {
                 builder.setBaseAlpha(a.getFloat(
-                        R.styleable.ShimmerRecyclerView_shimmer_recycler_base_alpha, 0.3f));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_base_alpha, 1f));
             }
             if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_highlight_alpha)) {
                 builder.setHighlightAlpha(a.getFloat(
-                        R.styleable.ShimmerRecyclerView_shimmer_recycler_highlight_alpha, 1f));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_highlight_alpha, 0.3f));
             }
             if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_duration)) {
                 builder.setDuration(a.getInteger(
@@ -447,7 +455,7 @@ public final class ShimmerRecyclerView extends RecyclerView {
             }
             if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_tilt)) {
                 builder.setTilt(a.getFloat(
-                        R.styleable.ShimmerRecyclerView_shimmer_recycler_tilt, 20f));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_tilt, 25f));
             }
 
             return builder.build();

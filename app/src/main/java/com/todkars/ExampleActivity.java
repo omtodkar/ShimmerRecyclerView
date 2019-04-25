@@ -132,7 +132,8 @@ public class ExampleActivity extends AppCompatActivity
         generateUserRetrievalTask().execute();
 
         mShimmerRecyclerView.showShimmer();
-        mToggleButton.setVisibility(View.INVISIBLE);
+        mOrientationButton.setEnabled(false);
+        mToggleButton.setEnabled(false);
     }
 
     /**
@@ -146,7 +147,8 @@ public class ExampleActivity extends AppCompatActivity
         adapter.updateData(users);
 
         mShimmerRecyclerView.hideShimmer();
-        mToggleButton.setVisibility(View.VISIBLE);
+        mOrientationButton.setEnabled(true);
+        mToggleButton.setEnabled(true);
 
         buttonsEnabled = true;
     }

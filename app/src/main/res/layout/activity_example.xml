@@ -53,13 +53,11 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline"
-            app:shimmer_recycler_auto_start="true"
-            app:shimmer_recycler_base_alpha="1"
-            app:shimmer_recycler_base_color="#3CCCCC"
+            app:shimmer_recycler_base_color="@color/colorShimmer"
             app:shimmer_recycler_colored="true"
-            app:shimmer_recycler_highlight_alpha="0.7"
+            app:shimmer_recycler_highlight_color="@color/colorShimmerHighlight"
             app:shimmer_recycler_layout="@layout/list_item_shimmer"
-            app:shimmer_recycler_tilt="30" />
+            tools:listitem="@layout/list_item_user" />
 
         <Button
             android:id="@+id/toggle_loading"
