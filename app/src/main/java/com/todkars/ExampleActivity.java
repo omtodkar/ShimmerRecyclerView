@@ -22,9 +22,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
-import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
@@ -37,22 +37,31 @@ import com.todkars.shimmer.ShimmerRecyclerView;
 
 import java.util.List;
 
-public class ExampleActivity extends AppCompatActivity implements UserRetrievalTask.UserRetrievalResult {
+public class ExampleActivity extends AppCompatActivity
+        implements UserRetrievalTask.UserRetrievalResult {
 
-    @VisibleForTesting
     public UserRetrievalTask userRetrievalTask;
 
-    private UserAdapter adapter = new UserAdapter();
+    private Button mReloadButton;
 
     private Button mToggleButton;
+
+    private CheckBox mOrientationButton;
+
     private ShimmerRecyclerView mShimmerRecyclerView;
 
     private boolean buttonsEnabled = true;
+
+    private UserAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_example);
+
+        /* initialize empty adapter */
+        adapter = new UserAdapter();
+
         setupViews();
     }
 
@@ -60,17 +69,31 @@ public class ExampleActivity extends AppCompatActivity implements UserRetrievalT
      * Initial view and recycler list setup.
      */
     private void setupViews() {
-        ViewDataBinding binder = DataBindingUtil.setContentView(this, R.layout.activity_example);
+        ViewDataBinding binder = DataBindingUtil.setContentView(this,
+                R.layout.activity_example);
         binder.setVariable(BR.activity, this);
         binder.setVariable(BR.active, buttonsEnabled);
 
+        mReloadButton = binder.getRoot().findViewById(R.id.toggle_loading);
         mToggleButton = binder.getRoot().findViewById(R.id.toggle_shimmer);
+        mOrientationButton = binder.getRoot().findViewById(R.id.change_layout_orientation);
 
         mShimmerRecyclerView = binder.getRoot().findViewById(R.id.user_listing);
+        mShimmerRecyclerView.setItemViewType((type, position) -> {
+            switch (type) {
+                case ShimmerRecyclerView.LAYOUT_GRID:
+                    return position % 2 == 0
+                            ? R.layout.list_item_shimmer_grid
+                            : R.layout.list_item_shimmer_grid_alternate;
+
+                default:
+                case ShimmerRecyclerView.LAYOUT_LIST:
+                    return position == 0 || position % 2 == 0
+                            ? R.layout.list_item_shimmer
+                            : R.layout.list_item_shimmer_alternate;
+            }
+        });
         mShimmerRecyclerView.setAdapter(adapter);
-        mShimmerRecyclerView.setShimmerLayout(R.layout.list_item_vertical_shimmer);
-        mShimmerRecyclerView.setShimmerItemCount(10);
-        mShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         onReload(null /* initial call to load data */);
     }
@@ -79,18 +102,18 @@ public class ExampleActivity extends AppCompatActivity implements UserRetrievalT
      * When layout orientation {@link android.widget.CheckBox} is checked,
      * set list orientation to gird else vice versa.
      *
-     * @param button checkbox.
-     * @param grid   isChecked value.
+     * @param button view.
+     * @param isGrid isChecked value.
      */
-    public void onLayoutOrientationChange(CompoundButton button, boolean grid) {
+    public void onLayoutOrientationChange(CompoundButton button, boolean isGrid) {
         mShimmerRecyclerView.setLayoutManager(
-                grid
+                isGrid
                         ? new GridLayoutManager(this, 2)
                         : new LinearLayoutManager(this),
-                grid
-                        ? R.layout.list_item_grid_shimmer
-                        : R.layout.list_item_vertical_shimmer);
-        adapter.changeOrientation(grid);
+                isGrid
+                        ? R.layout.list_item_shimmer_grid
+                        : R.layout.list_item_shimmer);
+        adapter.changeOrientation(isGrid);
         mShimmerRecyclerView.setAdapter(adapter);
     }
 
@@ -107,6 +130,9 @@ public class ExampleActivity extends AppCompatActivity implements UserRetrievalT
             mShimmerRecyclerView.showShimmer();
             ((Button) view).setText(R.string.toggle_shimmer_hide);
         }
+
+        mOrientationButton.setEnabled(!mShimmerRecyclerView.isShimmerShowing());
+        mReloadButton.setEnabled(!mShimmerRecyclerView.isShimmerShowing());
     }
 
     /**
@@ -117,9 +143,12 @@ public class ExampleActivity extends AppCompatActivity implements UserRetrievalT
      */
     public void onReload(View view) {
         buttonsEnabled = false;
-        mShimmerRecyclerView.showShimmer();
-        mToggleButton.setVisibility(View.INVISIBLE);
+
         generateUserRetrievalTask().execute();
+
+        mShimmerRecyclerView.showShimmer();
+        mOrientationButton.setEnabled(false);
+        mToggleButton.setEnabled(false);
     }
 
     /**
@@ -129,14 +158,22 @@ public class ExampleActivity extends AppCompatActivity implements UserRetrievalT
      * @param users list of {@link User}s
      */
     @Override
-    @VisibleForTesting
     public void onResult(List<User> users) {
         adapter.updateData(users);
+
         mShimmerRecyclerView.hideShimmer();
+        mOrientationButton.setEnabled(true);
+        mToggleButton.setEnabled(true);
+
         buttonsEnabled = true;
-        mToggleButton.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Generate new instance of {@link AsyncTask}
+     * if it is not instantiated or already finished.
+     *
+     * @return instance of {@link AsyncTask}.
+     */
     private UserRetrievalTask generateUserRetrievalTask() {
         if (userRetrievalTask == null || userRetrievalTask.getStatus() == AsyncTask.Status.FINISHED)
             userRetrievalTask = new UserRetrievalTask(this, this);

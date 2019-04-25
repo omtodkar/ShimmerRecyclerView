@@ -25,9 +25,11 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 
 import androidx.annotation.CallSuper;
+import androidx.annotation.IntDef;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,8 +37,27 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.facebook.shimmer.Shimmer;
 import com.facebook.shimmer.Shimmer.Direction;
 import com.facebook.shimmer.Shimmer.Shape;
+import com.todkars.shimmer.ShimmerAdapter.ItemViewType;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 
 public final class ShimmerRecyclerView extends RecyclerView {
+
+    public static final int LAYOUT_GRID = 1;
+
+    public static final int LAYOUT_LIST = 0;
+
+    /**
+     * @hide
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    @IntDef({LAYOUT_GRID, LAYOUT_LIST})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface LayoutType {
+    }
 
     private ShimmerAdapter mShimmerAdapter;
 
@@ -48,7 +69,7 @@ public final class ShimmerRecyclerView extends RecyclerView {
 
     private boolean isShimmerShowing;
 
-    @RecyclerView.Orientation
+    @Orientation
     private int mLayoutOrientation = RecyclerView.VERTICAL;
 
     private boolean mLayoutReverse = false;
@@ -56,9 +77,14 @@ public final class ShimmerRecyclerView extends RecyclerView {
     private int mGridSpanCount = -1;
 
     @LayoutRes
-    private int mShimmerLayout;
+    private int mShimmerLayout = 0;
 
-    private int mShimmerItemCount;
+    private int mShimmerItemCount = 9;
+
+    @LayoutType
+    private int mLayoutType = LAYOUT_LIST;
+
+    private ItemViewType mItemViewType = null;
 
     private Shimmer shimmer;
 
@@ -99,14 +125,7 @@ public final class ShimmerRecyclerView extends RecyclerView {
         }
 
         initializeLayoutManager();
-
-        if (mShimmerAdapter != null) {
-            mShimmerAdapter.setLayout(mShimmerLayout);
-            mShimmerAdapter.setCount(mShimmerItemCount);
-            mShimmerAdapter.setShimmer(shimmer);
-
-            mShimmerAdapter.notifyDataSetChanged();
-        }
+        invalidateShimmerAdapter();
 
         super.setLayoutManager(manager);
     }
@@ -127,29 +146,36 @@ public final class ShimmerRecyclerView extends RecyclerView {
     // Public APIs
     ///////////////////////////////////////////////////////////////////////////
 
+    /**
+     * Start showing shimmer loading.
+     */
     public final void showShimmer() {
-        isShimmerShowing = true;
-
         if (mShimmerLayoutManager == null) {
             initializeLayoutManager();
         }
 
         setLayoutManager(mShimmerLayoutManager);
-        setAdapter(mShimmerAdapter);
+        invalidateShimmerAdapter();
+        setAdapter(getShimmerAdapter());
+
+        isShimmerShowing = true;
     }
 
+    /**
+     * Stop showing shimmer loading and setup
+     */
     public final void hideShimmer() {
-        isShimmerShowing = false;
-
         setLayoutManager(mLayoutManager);
-        setAdapter(mActualAdapter);
+        setAdapter(getActualAdapter());
+
+        isShimmerShowing = false;
     }
 
     /**
      * Similar to setting {@link #setShimmerLayout(int)}
      * and then {@link #setLayoutManager(LayoutManager)}.
      *
-     * @param manager       {@link androidx.recyclerview.widget.RecyclerView.LayoutManager}
+     * @param manager       linear or grid layout manager.
      * @param shimmerLayout shimmer layout
      */
     public void setLayoutManager(@Nullable LayoutManager manager, @LayoutRes int shimmerLayout) {
@@ -171,6 +197,7 @@ public final class ShimmerRecyclerView extends RecyclerView {
     /**
      * @return layout reference used as shimmer layout.
      */
+    @LayoutRes
     public final int getShimmerLayout() {
         return mShimmerLayout;
     }
@@ -222,7 +249,10 @@ public final class ShimmerRecyclerView extends RecyclerView {
     /**
      * @return Shimmer adapter
      */
-    public final Adapter getShimmerAdapter() {
+    public final ShimmerAdapter getShimmerAdapter() {
+        if (mShimmerAdapter == null)
+            mShimmerAdapter = new ShimmerAdapter(mShimmerLayout, mShimmerItemCount, mLayoutType,
+                    mItemViewType, shimmer);
         return mShimmerAdapter;
     }
 
@@ -233,15 +263,18 @@ public final class ShimmerRecyclerView extends RecyclerView {
         return mActualAdapter;
     }
 
+    /**
+     * Setup loading shimmer view type.
+     *
+     * @param itemViewType a contract with {@link ShimmerAdapter}.
+     */
+    public final void setItemViewType(ItemViewType itemViewType) {
+        this.mItemViewType = itemViewType;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // Internal APIs
     ///////////////////////////////////////////////////////////////////////////
-
-
-    @Override
-    public boolean isInEditMode() {
-        return true;
-    }
 
     /**
      * Initialize Shimmer adapter based on provided shimmer settings.
@@ -251,7 +284,36 @@ public final class ShimmerRecyclerView extends RecyclerView {
      */
     private void initialize(Context context, AttributeSet attrs) {
         if (shimmer == null) shimmer = getDefaultSettings(context, attrs);
-        mShimmerAdapter = new ShimmerAdapter(mShimmerLayout, mShimmerItemCount, shimmer);
+    }
+
+    /**
+     * Reset layout, count and shimmer settings
+     * in adapter and invalidate data.
+     */
+    private void invalidateShimmerAdapter() {
+        getShimmerAdapter(); // just to initialize, if it is null.
+
+        mShimmerAdapter.setLayout(mShimmerLayout);
+        mShimmerAdapter.setCount(mShimmerItemCount);
+        mShimmerAdapter.setShimmerItemViewType(mLayoutType, mItemViewType);
+        mShimmerAdapter.setShimmer(shimmer);
+
+        mShimmerAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * If no shimmer layout is provided, use default layout
+     * depending on layout manager.
+     *
+     * @param isGrid is GridLayoutManager attached to RecyclerView.
+     */
+    private void tryAssigningDefaultLayout(boolean isGrid) {
+        if (mShimmerLayout == 0
+                || mShimmerLayout == R.layout.recyclerview_shimmer_item_grid
+                || mShimmerLayout == R.layout.recyclerview_shimmer_item_list)
+            mShimmerLayout = isGrid
+                    ? R.layout.recyclerview_shimmer_item_grid
+                    : R.layout.recyclerview_shimmer_item_list;
     }
 
     /**
@@ -286,6 +348,10 @@ public final class ShimmerRecyclerView extends RecyclerView {
                 }
             };
         }
+
+        boolean isGridLayoutManager = mShimmerLayoutManager instanceof GridLayoutManager;
+        mLayoutType = isGridLayoutManager ? LAYOUT_GRID : LAYOUT_LIST;
+        tryAssigningDefaultLayout(isGridLayoutManager);
     }
 
     /**
@@ -296,9 +362,12 @@ public final class ShimmerRecyclerView extends RecyclerView {
      * @return default {@link Shimmer} built-up considering xml attributes.
      */
     private Shimmer getDefaultSettings(Context context, AttributeSet attrs) {
-        if (attrs == null) {
-            return new Shimmer.AlphaHighlightBuilder().build();
-        }
+        if (attrs == null) return new Shimmer.AlphaHighlightBuilder()
+                /* alter default values */
+                .setBaseAlpha(1f)
+                .setHighlightAlpha(0.3f)
+                .setTilt(25f)
+                .build();
 
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.ShimmerRecyclerView, 0, 0);
@@ -307,6 +376,16 @@ public final class ShimmerRecyclerView extends RecyclerView {
             Shimmer.Builder builder = a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_colored)
                     && a.getBoolean(R.styleable.ShimmerRecyclerView_shimmer_recycler_colored, false)
                     ? new Shimmer.ColorHighlightBuilder() : new Shimmer.AlphaHighlightBuilder();
+
+            // layout reference
+            if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_layout)) {
+                setShimmerLayout(a.getResourceId(
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_layout, mShimmerLayout));
+            }
+
+            // shimmer item count
+            setShimmerItemCount(a.getInteger(
+                    R.styleable.ShimmerRecyclerView_shimmer_recycler_item_count, mShimmerItemCount));
 
             if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_clip_to_children)) {
                 builder.setClipToChildren(a.getBoolean(
@@ -331,11 +410,11 @@ public final class ShimmerRecyclerView extends RecyclerView {
 
             if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_base_alpha)) {
                 builder.setBaseAlpha(a.getFloat(
-                        R.styleable.ShimmerRecyclerView_shimmer_recycler_base_alpha, 0.3f));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_base_alpha, 1f));
             }
             if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_highlight_alpha)) {
                 builder.setHighlightAlpha(a.getFloat(
-                        R.styleable.ShimmerRecyclerView_shimmer_recycler_highlight_alpha, 1f));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_highlight_alpha, 0.3f));
             }
             if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_duration)) {
                 builder.setDuration(a.getInteger(
@@ -415,7 +494,7 @@ public final class ShimmerRecyclerView extends RecyclerView {
             }
             if (a.hasValue(R.styleable.ShimmerRecyclerView_shimmer_recycler_tilt)) {
                 builder.setTilt(a.getFloat(
-                        R.styleable.ShimmerRecyclerView_shimmer_recycler_tilt, 20f));
+                        R.styleable.ShimmerRecyclerView_shimmer_recycler_tilt, 25f));
             }
 
             return builder.build();

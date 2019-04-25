@@ -47,7 +47,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserViewHolder> {
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ViewDataBinding binder = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), grid
-                ? R.layout.list_item_grid_user : R.layout.list_item_vertical_user, parent, false);
+                ? R.layout.list_item_user_grid : R.layout.list_item_user, parent, false);
         return new UserViewHolder(binder);
     }
 

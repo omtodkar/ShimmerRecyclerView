@@ -1,10 +1,24 @@
 # ShimmerRecyclerView
 
-[![Build Status](https://travis-ci.com/omtodkar/ShimmerRecyclerView.svg?branch=master)](https://travis-ci.com/omtodkar/ShimmerRecyclerView) [ ![Download](https://api.bintray.com/packages/todkars/android/shimmer-recyclerview/images/download.svg?version=0.2.0) ](https://bintray.com/todkars/android/shimmer-recyclerview/0.2.0/link) ![GitHub](https://img.shields.io/github/license/omtodkar/ShimmerRecyclerView.svg?label=License) [![API](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14) [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-ShimmerRecyclerView-green.svg?style=flat )]( https://android-arsenal.com/details/1/7612 ) 
+[ ![Build Status](https://travis-ci.com/omtodkar/ShimmerRecyclerView.svg?branch=master) ](https://travis-ci.com/omtodkar/ShimmerRecyclerView) [ ![Download](https://api.bintray.com/packages/todkars/android/shimmer-recyclerview/images/download.svg?version=0.3.0) ](https://bintray.com/todkars/android/shimmer-recyclerview/0.3.0/link) ![GitHub](https://img.shields.io/github/license/omtodkar/ShimmerRecyclerView.svg?label=License) [![API](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14) [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-ShimmerRecyclerView-green.svg?style=flat )]( https://android-arsenal.com/details/1/7612 ) 
 
 ShimmerRecyclerView is an custom RecyclerView library based on Facebook's [Shimmer](https://github.com/facebook/shimmer-android) effect for Android library and inspired from [Sharish's ShimmerRecyclerView](https://github.com/sharish/ShimmerRecyclerView).
 
 There is reason behind creating a separate library for ShimmerRecyclerView, most of libraries doesn't not support runtime switching of `LayoutManager` or shimmer `layout` resources. Secondly the other similar library is build upon [Supercharge's ShimmerLayout](https://github.com/team-supercharge/ShimmerLayout) which is I feel very less active in terms of release. So I came up with an alternative.
+
+## Switching List and Grid layout demo
+
+Change layout manager in runtime `LinearLayoutManager` to `GridLayoutManager` and Shimmer will adopt accordingly.
+
+<img src='demo/list-grid-demo.gif' height=480 width=240 />
+
+## Multiple view type demo
+
+Setup `mShimmerRecyclerView.setItemViewType(ShimmerAdapter.ItemViewType)` to change view type of Shimmer adapter.
+
+|     List Demo                |        Grid Demo              |
+| ----------------------------  | ----------------------------- |
+| <img src='demo/list-demo.gif' height=480 width=240 /> | <img src='demo/grid-demo.gif' height=480 width=240 /> |
 
 ## Download
 
@@ -27,8 +41,10 @@ The following snippet shows how you can use Shimmer RecyclerView in your project
     android:id="@+id/shimmer_recycler_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:shimmer_recycler_colored="true"
-    app:shimmer_recycler_duration="1000" />
+    android:orientation="vertical"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+    app:shimmer_recycler_layout="@layout/list_item_shimmer_layout"
+    app:shimmer_recycler_item_count="10" />
 ```
 
 **Activity**
@@ -45,12 +61,31 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         
         mShimmerRecyclerView = findViewById(R.id.shimmer_recycler_view);
-        mShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(this), R.layout.list_item_shimmer_layout);
+        
+        mShimmerRecyclerView.setLayoutManager(new LinearLayoutManager(this),
+            R.layout.list_item_shimmer_layout);
+        
         mShimmerRecyclerView.setAdapter(adapter);
         
         // This is optional, use if no attributes are mentioned in layout xml resource.
-        // WARNING: Setting Shimmer programmatically will obsolete all xml attributes.
+        // WARNING: Setting Shimmer programmatically will obsolete all shimmer attributes.
         /* mShimmerRecyclerView.setShimmer(mShimmer); */
+        
+        /* Shimmer layout view type depending on List / Gird */
+        mShimmerRecyclerView.setItemViewType((type, position) -> {
+            switch (type) {
+                case ShimmerRecyclerView.LAYOUT_GRID:
+                    return position % 2 == 0
+                            ? R.layout.list_item_shimmer_grid
+                            : R.layout.list_item_shimmer_grid_alternate;
+
+                default:
+                case ShimmerRecyclerView.LAYOUT_LIST:
+                    return position == 0 || position % 2 == 0
+                            ? R.layout.list_item_shimmer
+                            : R.layout.list_item_shimmer_alternate;
+            }
+        });
         
         mShimmerRecyclerView.showShimmer();     // to start showing shimmer
         
@@ -60,14 +95,16 @@ public class MainActivity extends Activity {
         }, 3000);
     }
 }
-``` 
+```
 
 ## Attributes
 
-All attributes used for **ShimmerRecyclerView** are same as Facebook's ***ShimmerFrameLayout*** below is detail table:
+Most of the attributes used for **ShimmerRecyclerView** are same as Facebook's ***ShimmerFrameLayout*** below is detail table:
 
 | Name | Attribute |  Description |
 |---|---|---|
+| Shimmer Layout | shimmer_recycler_layout | Layout reference used for as shimmer base. |
+| Shimmer Item Count | shimmer_recycler_item_count | Number of shimmers to be shown in list, default is 9. |
 | Clip to Children | `shimmer_recycler_clip_to_children` | Whether to clip the shimmering effect to the children, or to opaquely draw the shimmer on top of the children. Use this if your overall layout contains transparency. |
 | Colored | `shimmer_recycler_colored` | Whether you want the shimmer to affect just the alpha or draw colors on-top of the children. |
 | Base Color | `shimmer_recycler_base_color` | If colored is specified, the base color of the content. |

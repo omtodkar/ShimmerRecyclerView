@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- disable icons -->
+    <item android:drawable="@drawable/ic_view_list_disable" android:state_checked="true" android:state_enabled="false" />
+    <item android:drawable="@drawable/ic_view_module_disable" android:state_checked="false" android:state_enabled="false" />
+    <!-- focused icons -->
     <item android:drawable="@drawable/ic_view_list" android:state_checked="true" android:state_focused="true" />
     <item android:drawable="@drawable/ic_view_module" android:state_checked="false" android:state_focused="true" />
+    <!-- default -->
     <item android:drawable="@drawable/ic_view_module" android:state_checked="false" />
     <item android:drawable="@drawable/ic_view_list" android:state_checked="true" />
 </selector>

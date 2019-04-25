@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 ShimmerRecyclerView a custom RecyclerView library
 Copyright (C) 2019  Omkar Todkar
 
@@ -31,7 +30,7 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="#E6F5F4"
+        android:background="@color/colorShimmer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -45,7 +44,7 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="#E6F5F4"
+        android:background="@color/colorShimmer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/user_fullname" />
@@ -58,7 +57,7 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:background="#E6F5F4"
+        android:background="@color/colorShimmer"
         app:layout_constraintEnd_toStartOf="@+id/id"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
@@ -73,7 +72,7 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="#E6F5F4"
+        android:background="@color/colorShimmer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/ip_address"
