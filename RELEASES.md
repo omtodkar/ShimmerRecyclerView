@@ -3,11 +3,11 @@
 ShimmerRecyclerView is an custom RecyclerView library based on Facebook's [Shimmer](https://github.com/facebook/shimmer-android) effect for Android library
 
 ### v0.3.0
-Now you can set xml attributes for shimmer layout reference and number of shimmer.
+Now you can set xml attributes for shimmer layout reference and number of shimmer to be shown while loading. Also now you can able to change view type of `ShimmerAdapter`.
 
+- New `ItemViewType` contract to setup viewType for `ShimmerAdapter` based on `layoutType` and `position`, use `ShimmerRecyclerView.setItemViewType`.
 - Use `shimmer_recycler_layout` xml attribute to set shimmer layout reference.
 - Use `shimmer_recycler_item_count` xml attribute to set number of shimmer items.
-- New `ItemViewType` contract to setup `ShimmerAdapter` `viewType` based on position and layoutType.
 
 ### v0.2.0
 
