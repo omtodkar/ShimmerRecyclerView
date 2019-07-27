@@ -52,13 +52,19 @@ public final class ShimmerAdapter extends RecyclerView.Adapter<ShimmerViewHolder
 
     private ItemViewType itemViewType;
 
+
+    @RecyclerView.Orientation
+    private int mLayoutOrientation;
+
+
     ShimmerAdapter(@LayoutRes int layout, int itemCount, int layoutManagerType,
-                   ItemViewType itemViewType, Shimmer shimmer) {
+                   ItemViewType itemViewType, Shimmer shimmer, int layoutOrientation) {
         this.layout = layout;
         this.itemCount = validateCount(itemCount);
         this.layoutManagerType = layoutManagerType;
         this.itemViewType = itemViewType;
         this.shimmer = shimmer;
+        this.mLayoutOrientation = layoutOrientation;
     }
 
     @Override
@@ -75,6 +81,10 @@ public final class ShimmerAdapter extends RecyclerView.Adapter<ShimmerViewHolder
         /* inflate view holder layout and then attach provided view in it. */
         View view = inflater.inflate(R.layout.recyclerview_shimmer_viewholder_layout,
                 parent, false);
+
+        if (mLayoutOrientation == RecyclerView.HORIZONTAL) {
+            view.getLayoutParams().width = ViewGroup.LayoutParams.WRAP_CONTENT;
+        }
 
         return new ShimmerViewHolder((ShimmerFrameLayout) inflater
                 .inflate(viewType, (ShimmerFrameLayout) view,
