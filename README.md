@@ -1,24 +1,19 @@
 # ShimmerRecyclerView
 
-[ ![Build Status](https://travis-ci.com/omtodkar/ShimmerRecyclerView.svg?branch=master) ](https://travis-ci.com/omtodkar/ShimmerRecyclerView) [ ![Download](https://api.bintray.com/packages/todkars/android/shimmer-recyclerview/images/download.svg?version=0.3.0) ](https://bintray.com/todkars/android/shimmer-recyclerview/0.3.0/link) ![GitHub](https://img.shields.io/github/license/omtodkar/ShimmerRecyclerView.svg?label=License) [![API](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14) [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-ShimmerRecyclerView-green.svg?style=flat )]( https://android-arsenal.com/details/1/7612 ) 
+[![Build Status](https://travis-ci.com/omtodkar/ShimmerRecyclerView.svg)](https://travis-ci.com/omtodkar/ShimmerRecyclerView) [![Download](https://api.bintray.com/packages/todkars/android/shimmer-recyclerview/images/download.svg?version=0.4.0)](https://bintray.com/todkars/android/shimmer-recyclerview/0.4.0/link) ![GitHub](https://img.shields.io/github/license/omtodkar/ShimmerRecyclerView.svg?label=License) [![API](https://img.shields.io/badge/API-14%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=14) [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-ShimmerRecyclerView-green.svg?style=flat )]( https://android-arsenal.com/details/1/7612 ) 
 
 ShimmerRecyclerView is an custom RecyclerView library based on Facebook's [Shimmer](https://github.com/facebook/shimmer-android) effect for Android library and inspired from [Sharish's ShimmerRecyclerView](https://github.com/sharish/ShimmerRecyclerView).
 
 There is reason behind creating a separate library for ShimmerRecyclerView, most of libraries doesn't not support runtime switching of `LayoutManager` or shimmer `layout` resources. Secondly the other similar library is build upon [Supercharge's ShimmerLayout](https://github.com/team-supercharge/ShimmerLayout) which is I feel very less active in terms of release. So I came up with an alternative.
 
-## Switching List and Grid layout demo
+## Demo
 
 Change layout manager in runtime `LinearLayoutManager` to `GridLayoutManager` and Shimmer will adopt accordingly.
+ Setup `mShimmerRecyclerView.setItemViewType(ShimmerAdapter.ItemViewType)` to change view type of Shimmer adapter.
 
-<img src='demo/list-grid-demo.gif' height=480 width=240 />
-
-## Multiple view type demo
-
-Setup `mShimmerRecyclerView.setItemViewType(ShimmerAdapter.ItemViewType)` to change view type of Shimmer adapter.
-
-|     List Demo                |        Grid Demo              |
-| ----------------------------  | ----------------------------- |
-| <img src='demo/list-demo.gif' height=480 width=240 /> | <img src='demo/grid-demo.gif' height=480 width=240 /> |
+|        Switching Layouts     |        Multiple Type Demo     |        Grid Demo             |
+| ---------------------------- | ----------------------------- | ---------------------------- |
+| <img src='demo/list-grid-demo.gif' height=480 width=240 /> | <img src='demo/list-demo.gif' height=480 width=240 /> | <img src='demo/grid-demo.gif' height=480 width=240 /> |
 
 ## Download
 
