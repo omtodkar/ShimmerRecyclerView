@@ -252,7 +252,7 @@ public final class ShimmerRecyclerView extends RecyclerView {
     public final ShimmerAdapter getShimmerAdapter() {
         if (mShimmerAdapter == null)
             mShimmerAdapter = new ShimmerAdapter(mShimmerLayout, mShimmerItemCount, mLayoutType,
-                    mItemViewType, shimmer);
+                    mItemViewType, shimmer, mLayoutOrientation);
         return mShimmerAdapter;
     }
 
