@@ -22,8 +22,8 @@ To include `ShimmerRecyclerView` in your project, add the following to your depe
 **app/build.gradle**
 ```groovy
 dependencies {
-       implementation 'com.facebook.shimmer:shimmer:0.4.0'
-       implementation 'com.github.hamzaahmedkhan:ShimmerRecyclerView:v0.4.0'
+   implementation 'com.facebook.shimmer:shimmer:0.4.0'
+   implementation 'com.todkars:shimmer-recyclerview:0.4.0'
 }
 ```
 
