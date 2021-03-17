@@ -132,6 +132,6 @@ public final class ShimmerAdapter extends RecyclerView.Adapter<ShimmerViewHolder
      * @return valid count number.
      */
     private int validateCount(int count) {
-        return count < 20 ? count : 20;
+        return Math.min(count, 20);
     }
 }
