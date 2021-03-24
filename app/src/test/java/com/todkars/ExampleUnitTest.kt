@@ -18,16 +18,14 @@ https://github.com/omtodkar/ShimmerRecyclerView/blob/master/LICENSE.md
 */
 package com.todkars
 
-import android.widget.Button
-import android.widget.CheckBox
+import android.os.Build
+import android.os.Looper
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import com.todkars.ExampleTestActivity.TestCallback
 import com.todkars.model.User
 import com.todkars.shimmer.ShimmerAdapter
-import com.todkars.shimmer.ShimmerRecyclerView
-import kotlinx.android.synthetic.main.activity_example.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -35,7 +33,10 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.android.controller.ActivityController
+import org.robolectric.annotation.Config
+import org.robolectric.annotation.LooperMode
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -43,6 +44,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  *
  * @see [Testing documentation](http://d.android.com/tools/testing)
  */
+@Config(sdk = [Build.VERSION_CODES.O_MR1])
 @RunWith(RobolectricTestRunner::class)
 class ExampleUnitTest {
 
@@ -117,7 +119,7 @@ class ExampleUnitTest {
 
                 // when
                 controller.get().userRetrievalTask = task
-                val reload = controller.get().findViewById<Button>(R.id.toggle_loading)
+                val reload = controller.get().binding.toggleLoading
                 reload.performClick()
 
                 // then
@@ -141,16 +143,17 @@ class ExampleUnitTest {
 
     /**
      * Check on click of toggle button, shimmer is shown.
-     */
+
     @Test
+    @LooperMode(LooperMode.Mode.PAUSED)
     fun test_toggle_shimmer_on_button_click() {
         // given
         val isNotNotified = AtomicBoolean(true)
         val obj = Object()
         controller.get().callback = object : TestCallback {
             override fun onResultReceived(users: List<User>) {
-                val recyclerView = controller.get().user_listing
-                val toggleButton = controller.get().toggle_shimmer
+                val recyclerView = controller.get().binding.userListing
+                val toggleButton = controller.get().binding.toggleLoading
 
                 // when
                 toggleButton.performClick()
@@ -182,7 +185,7 @@ class ExampleUnitTest {
             synchronized(obj) {
                 obj.wait()
             }
-    }
+    } */
 
     /**
      * Confirm initial {@link LayoutManager} of {@link ShimmerRecyclerView}
@@ -198,11 +201,8 @@ class ExampleUnitTest {
         val obj = Object()
         controller.get().callback = object : TestCallback {
             override fun onResultReceived(users: List<User>) {
-                val recyclerView = controller.get()
-                        .findViewById<ShimmerRecyclerView>(R.id.user_listing)
-
-                val layoutToggleButton = controller.get()
-                        .findViewById<CheckBox>(R.id.change_layout_orientation)
+                val recyclerView = controller.get().binding.userListing
+                val layoutToggleButton = controller.get().binding.changeLayoutOrientation
 
                 // default state
                 assertWithMessage("at default state: %s",

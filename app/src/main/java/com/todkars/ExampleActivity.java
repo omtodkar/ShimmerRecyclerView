@@ -22,16 +22,14 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ViewDataBinding;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.todkars.adapters.UserAdapter;
+import com.todkars.databinding.ActivityExampleBinding;
 import com.todkars.model.User;
 import com.todkars.shimmer.ShimmerRecyclerView;
 
@@ -42,22 +40,18 @@ public class ExampleActivity extends AppCompatActivity
 
     public UserRetrievalTask userRetrievalTask;
 
-    private Button mReloadButton;
-
-    private Button mToggleButton;
-
-    private CheckBox mOrientationButton;
-
-    private ShimmerRecyclerView mShimmerRecyclerView;
-
     private boolean buttonsEnabled = true;
 
     private UserAdapter adapter;
 
+    public ActivityExampleBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_example);
+        binding = ActivityExampleBinding.inflate(getLayoutInflater());
+        View root = binding.getRoot();
+        setContentView(root);
 
         /* initialize empty adapter */
         adapter = new UserAdapter();
@@ -69,17 +63,11 @@ public class ExampleActivity extends AppCompatActivity
      * Initial view and recycler list setup.
      */
     private void setupViews() {
-        ViewDataBinding binder = DataBindingUtil.setContentView(this,
-                R.layout.activity_example);
-        binder.setVariable(BR.activity, this);
-        binder.setVariable(BR.active, buttonsEnabled);
-
-        mReloadButton = binder.getRoot().findViewById(R.id.toggle_loading);
-        mToggleButton = binder.getRoot().findViewById(R.id.toggle_shimmer);
-        mOrientationButton = binder.getRoot().findViewById(R.id.change_layout_orientation);
-
-        mShimmerRecyclerView = binder.getRoot().findViewById(R.id.user_listing);
-        mShimmerRecyclerView.setItemViewType((type, position) -> {
+        binding.setVariable(BR.activity, this);
+        binding.setVariable(BR.active, buttonsEnabled);
+        binding.toggleLoading.setOnClickListener(this::onReload);
+        binding.toggleShimmer.setOnClickListener(this::onToggleShimmer);
+        binding.userListing.setItemViewType((type, position) -> {
             switch (type) {
                 case ShimmerRecyclerView.LAYOUT_GRID:
                     return position % 2 == 0
@@ -88,12 +76,12 @@ public class ExampleActivity extends AppCompatActivity
 
                 default:
                 case ShimmerRecyclerView.LAYOUT_LIST:
-                    return position == 0 || position % 2 == 0
+                    return position % 2 == 0
                             ? R.layout.list_item_shimmer
                             : R.layout.list_item_shimmer_alternate;
             }
         });
-        mShimmerRecyclerView.setAdapter(adapter);
+        binding.userListing.setAdapter(adapter);
 
         onReload(null /* initial call to load data */);
     }
@@ -106,7 +94,7 @@ public class ExampleActivity extends AppCompatActivity
      * @param isGrid isChecked value.
      */
     public void onLayoutOrientationChange(CompoundButton button, boolean isGrid) {
-        mShimmerRecyclerView.setLayoutManager(
+        binding.userListing.setLayoutManager(
                 isGrid
                         ? new GridLayoutManager(this, 2)
                         : new LinearLayoutManager(this),
@@ -114,7 +102,7 @@ public class ExampleActivity extends AppCompatActivity
                         ? R.layout.list_item_shimmer_grid
                         : R.layout.list_item_shimmer);
         adapter.changeOrientation(isGrid);
-        mShimmerRecyclerView.setAdapter(adapter);
+        binding.userListing.setAdapter(adapter);
     }
 
     /**
@@ -123,16 +111,16 @@ public class ExampleActivity extends AppCompatActivity
      * @param view toggle button view.
      */
     public void onToggleShimmer(View view) {
-        if (mShimmerRecyclerView.isShimmerShowing()) {
-            mShimmerRecyclerView.hideShimmer();
+        if (binding.userListing.isShimmerShowing()) {
+            binding.userListing.hideShimmer();
             ((Button) view).setText(R.string.toggle_shimmer_show);
         } else {
-            mShimmerRecyclerView.showShimmer();
+            binding.userListing.showShimmer();
             ((Button) view).setText(R.string.toggle_shimmer_hide);
         }
 
-        mOrientationButton.setEnabled(!mShimmerRecyclerView.isShimmerShowing());
-        mReloadButton.setEnabled(!mShimmerRecyclerView.isShimmerShowing());
+        binding.changeLayoutOrientation.setEnabled(!binding.userListing.isShimmerShowing());
+        binding.toggleLoading.setEnabled(!binding.userListing.isShimmerShowing());
     }
 
     /**
@@ -146,9 +134,9 @@ public class ExampleActivity extends AppCompatActivity
 
         generateUserRetrievalTask().execute();
 
-        mShimmerRecyclerView.showShimmer();
-        mOrientationButton.setEnabled(false);
-        mToggleButton.setEnabled(false);
+        binding.userListing.showShimmer();
+        binding.changeLayoutOrientation.setEnabled(false);
+        binding.toggleShimmer.setEnabled(false);
     }
 
     /**
@@ -161,9 +149,9 @@ public class ExampleActivity extends AppCompatActivity
     public void onResult(List<User> users) {
         adapter.updateData(users);
 
-        mShimmerRecyclerView.hideShimmer();
-        mOrientationButton.setEnabled(true);
-        mToggleButton.setEnabled(true);
+        binding.userListing.hideShimmer();
+        binding.changeLayoutOrientation.setEnabled(true);
+        binding.toggleShimmer.setEnabled(true);
 
         buttonsEnabled = true;
     }
