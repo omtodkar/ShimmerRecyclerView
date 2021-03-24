@@ -2,6 +2,8 @@
 
 ShimmerRecyclerView is an custom RecyclerView library based on Facebook's [Shimmer](https://github.com/facebook/shimmer-android) effect for Android library
 
+### v0.4.1
+- Upgrade all dependencies to latest.
 
 ### v0.4.0
 - Linear Horizontal Recyclerview bug fixed.

@@ -10,7 +10,7 @@ android {
         targetSdkVersion 30
 
         versionCode 1
-        versionName "0.4.0"
+        versionName "0.4.1"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
